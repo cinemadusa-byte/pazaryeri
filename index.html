@@ -45,18 +45,27 @@ aside h3{margin-bottom:12px}
 .empty{padding:30px;text-align:center;color:var(--muted);background:var(--panel);border-radius:10px}
 .modal{display:none;position:fixed;inset:0;background:#000c;z-index:10;align-items:center;justify-content:center;padding:15px}
 .modal.show{display:flex}
-.modal-box{position:relative;background:var(--panel);border:1px solid var(--line);padding:23px;border-radius:13px;width:min(550px,100%);max-height:90vh;overflow:auto}
+.modal-box{position:relative;background:var(--panel);border:1px solid var(--line);padding:23px;border-radius:13px;width:min(600px,100%);max-height:90vh;overflow:auto}
 .modal-box h2{margin-bottom:16px}
 .close{position:absolute;right:13px;top:10px;background:none;border:0;color:white;font-size:26px}
 .field{display:grid;gap:6px;margin:12px 0}
 .field label{font-size:13px;color:#ddd}
 .field textarea{min-height:90px}
 .field input[type=file]{padding:8px}
-.notice{background:#282d36;color:#cbd0da;padding:11px;border-radius:7px;font-size:13px;margin:12px 0}
+.notice{background:#282d36;color:#cbd0da;padding:11px;border-radius:7px;font-size:13px;margin:12px 0;line-height:1.5}
 .status{font-size:13px;color:#45d49a;margin-top:10px}
 .error{color:#ff7777}
 .detail-img{width:100%;max-height:300px;object-fit:contain;margin:10px 0}
-footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid var(--line);margin-top:35px}
+.acceptance{display:flex;align-items:flex-start;gap:9px;background:#252830;border:1px solid var(--line);padding:12px;border-radius:8px;margin:13px 0;font-size:13px;line-height:1.5;color:#ddd}
+.acceptance input{margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:var(--orange)}
+.acceptance a,.footer-links a,.legal-link{color:var(--orange);text-decoration:underline;cursor:pointer}
+footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid var(--line);margin-top:35px;line-height:2}
+.footer-links{display:flex;justify-content:center;gap:17px;flex-wrap:wrap;margin-bottom:12px}
+.footer-links a{font-size:13px}
+.legal-content{font-size:14px;line-height:1.7;color:#d5d8df;white-space:normal}
+.legal-content h3{color:var(--orange);margin:18px 0 7px;font-size:16px}
+.legal-content p{margin:8px 0}
+.legal-content ul{padding-left:20px;margin:8px 0}
 @media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}header{gap:9px}.search{order:3;flex-basis:100%}}
 @media(max-width:400px){.grid{gap:8px}.product img{height:120px}.hero{padding:23px}}
@@ -85,7 +94,6 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <h3>Kategoriler</h3>
 <div id="categories"><button class="cat active" data-id="">Tüm kategoriler</button></div>
 </aside>
-
 <section>
 <div class="filters">
 <select id="condition">
@@ -99,10 +107,7 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <option value="desc">Fiyat azalan</option>
 </select>
 </div>
-<div class="heading">
-<h2>Ürünler</h2>
-<small id="count"></small>
-</div>
+<div class="heading"><h2>Ürünler</h2><small id="count"></small></div>
 <div class="grid" id="products"></div>
 </section>
 </div>
@@ -113,7 +118,16 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 </section>
 </main>
 
-<footer>© 2026 PAZARYERİ.COM · Geliştirme aşamasındadır.</footer>
+<footer>
+<div class="footer-links">
+<a data-legal="terms">Kullanım Koşulları</a>
+<a data-legal="privacy">Gizlilik Politikası</a>
+<a data-legal="kvkk">KVKK Aydınlatma Metni</a>
+<a data-legal="cookies">Çerez Politikası</a>
+<a data-legal="listing">İlan Yayınlama Kuralları</a>
+</div>
+© 2026 PAZARYERİ.COM · Geliştirme aşamasındadır.
+</footer>
 
 <div class="modal" id="authModal">
 <div class="modal-box">
@@ -127,7 +141,16 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <div class="field" id="companyField" style="display:none"><label>Şirket adı</label><input id="companyName"></div>
 <div class="field"><label>E-posta</label><input id="email" type="email"></div>
 <div class="field"><label>Şifre</label><input id="password" type="password" minlength="6"></div>
-<div class="notice">E-posta doğrulaması açıksa kayıt sonrasında e-postandaki bağlantıya tıklamalısın.</div>
+
+<div id="registrationAcceptance" style="display:none">
+<label class="acceptance">
+<input type="checkbox" id="termsAccepted">
+<span><a data-legal="terms">Kullanım Koşulları</a>'nı okudum ve kabul ediyorum. Üyelik işleminin tamamlanması için bu onay zorunludur.</span>
+</label>
+<div class="notice"><a data-legal="kvkk">KVKK Aydınlatma Metni</a> ve <a data-legal="privacy">Gizlilik Politikası</a> hakkında bilgi edinebilirsin.</div>
+</div>
+
+<div class="notice">E-posta doğrulaması açıksa kayıt sonrasında e-postana gelen bağlantıya tıklamalısın.</div>
 <button class="primary btn" style="width:100%" id="authSubmit">Giriş yap</button>
 <div id="authMessage" class="status"></div>
 </div>
@@ -145,6 +168,13 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <div class="field"><label>Durum</label><select id="itemCondition"><option value="new">Sıfır</option><option value="used">İkinci el</option></select></div>
 <div class="field"><label>Açıklama</label><textarea id="description" required maxlength="4000"></textarea></div>
 <div class="field"><label>Fotoğraflar (en fazla 5, her biri en fazla 2 MB)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple></div>
+
+<label class="acceptance">
+<input type="checkbox" id="listingAccepted" required>
+<span><a data-legal="listing">İlan Yayınlama Kuralları</a>'nı okudum ve kabul ediyorum. Ürün bilgilerinin doğru olduğunu, satışa sunma hakkına sahip olduğumu ve yasaklı ürün ilanı vermediğimi beyan ederim.</span>
+</label>
+
+<div class="notice">Kargo, teslimat yöntemi ve kargo ücreti alıcı ile satıcı tarafından kendi aralarında belirlenir. PAZARYERİ.COM kargo hizmeti sunmaz. Bu açıklama, platformun kanundan doğan yükümlülüklerini ortadan kaldırmaz.</div>
 <button class="primary btn" type="submit" style="width:100%">İlanı gönder</button>
 <div id="listingMessage" class="status"></div>
 </form>
@@ -155,6 +185,14 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <div class="modal-box">
 <button class="close" data-close="detailModal">×</button>
 <div id="detailContent"></div>
+</div>
+</div>
+
+<div class="modal" id="legalModal">
+<div class="modal-box">
+<button class="close" data-close="legalModal">×</button>
+<h2 id="legalTitle">Bilgilendirme</h2>
+<div class="legal-content" id="legalContent"></div>
 </div>
 </div>
 
@@ -175,6 +213,106 @@ function money(value){
 }
 function show(id){$(id).classList.add("show")}
 function hide(id){$(id).classList.remove("show")}
+
+const legalDocuments={
+terms:{
+title:"Kullanım Koşulları",
+html:`
+<p><b>PAZARYERİ.COM Kullanım Koşulları</b></p>
+<p>Bu metin, PAZARYERİ.COM internet sitesini kullanan ziyaretçi, üye, alıcı ve satıcılar için hazırlanmış taslak kullanım koşullarıdır.</p>
+<h3>1. Platformun amacı</h3>
+<p>PAZARYERİ.COM, kullanıcıların ürün ilanı oluşturmasına, ilanları incelemesine ve alıcılarla satıcıların iletişim kurmasına imkân sağlamayı amaçlayan çevrim içi bir pazaryeri platformudur.</p>
+<h3>2. Platformun rolü</h3>
+<p>Platform, aksi ayrıca açıkça belirtilmedikçe ürünlerin satıcısı değildir. Ürün satışına ilişkin sözleşme alıcı ile satıcı arasında kurulur. Platformun aracılık faaliyetinden doğan kanuni yükümlülükleri saklıdır.</p>
+<h3>3. Kullanıcı sorumlulukları</h3>
+<ul>
+<li>Kullanıcılar doğru ve güncel bilgi vermelidir.</li>
+<li>Başkasına ait hesap veya kimlik bilgileri izinsiz kullanılamaz.</li>
+<li>Sahte, yanıltıcı, hukuka aykırı veya yasaklı ürün ilanı verilemez.</li>
+<li>Kullanıcılar yürürlükteki mevzuata uymakla yükümlüdür.</li>
+</ul>
+<h3>4. Alıcı ve satıcı arasındaki ilişki</h3>
+<p>Ürün bedeli, ödeme yöntemi, kargo firması, teslimat yöntemi ve kargo ücreti alıcı ile satıcı tarafından kendi aralarında kararlaştırılır. PAZARYERİ.COM bu sürümde kargo organizasyonu veya teslimat hizmeti sunmamaktadır.</p>
+<p>Bu düzenleme, emredici tüketici mevzuatından veya platformun kanuni sorumluluklarından doğan hak ve yükümlülükleri ortadan kaldırmaz.</p>
+<h3>5. İlanların incelenmesi</h3>
+<p>İlanlar platform kurallarına uygunluk açısından incelenebilir. Kurallara aykırı olduğu değerlendirilen ilanlar yayına alınmayabilir, kaldırılabilir veya hesaplar kısıtlanabilir.</p>
+<h3>6. Değişiklikler</h3>
+<p>Bu koşullar gerektiğinde güncellenebilir. Güncel metin internet sitesinde yayımlanır.</p>
+`
+},
+privacy:{
+title:"Gizlilik Politikası",
+html:`
+<p>PAZARYERİ.COM, kullanıcıların gizliliğine önem verir. Bu metin, platformun kullanımı sırasında elde edilen bilgilerin genel olarak nasıl ele alındığını açıklar.</p>
+<h3>Toplanabilecek bilgiler</h3>
+<ul><li>Ad, soyad veya şirket adı</li><li>E-posta adresi ve hesap bilgileri</li><li>Yayımlanan ilanlar, ürün açıklamaları ve fotoğraflar</li><li>Platform kullanımı sırasında oluşan teknik kayıtlar</li></ul>
+<h3>Bilgilerin kullanım amaçları</h3>
+<p>Hesap oluşturma, kullanıcı doğrulama, ilan yayımlama ve yönetme, güvenliği sağlama, destek taleplerini yanıtlama ve yasal yükümlülükleri yerine getirme amaçlarıyla kullanılabilir.</p>
+<h3>Paylaşım</h3>
+<p>Bilgiler, hizmetin sunulması için kullanılan teknik hizmet sağlayıcılarla ve kanunen yetkili kurumlarla, ilgili mevzuata uygun şekilde paylaşılabilir.</p>
+<h3>Güvenlik</h3>
+<p>Bilgilerin korunması için makul teknik ve idari tedbirler alınması hedeflenir. İnternet üzerinden yapılan hiçbir aktarımın mutlak güvenliği garanti edilemez.</p>
+<p>Veri işleme faaliyetlerinin ayrıntıları için KVKK Aydınlatma Metni incelenmelidir.</p>
+`
+},
+kvkk:{
+title:"KVKK Aydınlatma Metni",
+html:`
+<p><b>ÖNEMLİ: Bu metin yayına hazır nihai metin değildir.</b> İşletmecinin gerçek kimlik ve iletişim bilgileri ile veri işleme süreçleri tamamlanmadan yayımlanmamalıdır.</p>
+<h3>1. Veri sorumlusu</h3>
+<p>Veri sorumlusu: <b>[İŞLETMECİNİN ADI SOYADI]</b></p>
+<p>İletişim adresi: <b>[TEBLİGAT / İŞ YERİ ADRESİ]</b></p>
+<p>E-posta: <b>[İLETİŞİM E-POSTA ADRESİ]</b></p>
+<h3>2. İşlenen kişisel veriler</h3>
+<p>Üyelik ve platform kullanımı kapsamında kimlik ve iletişim bilgileri, hesap bilgileri, ilan içerikleri, işlem güvenliği kayıtları ve destek yazışmaları işlenebilir.</p>
+<h3>3. İşleme amaçları</h3>
+<p>Üyelik oluşturulması, hesapların yönetilmesi, ilan hizmetlerinin sunulması, kullanıcı güvenliğinin sağlanması, şikâyetlerin incelenmesi ve mevzuattan doğan yükümlülüklerin yerine getirilmesi.</p>
+<h3>4. Hukuki sebepler ve aktarım</h3>
+<p>Kişisel veriler, 6698 sayılı Kişisel Verilerin Korunması Kanunu'nun 5. ve gerektiğinde 6. maddelerinde belirtilen hukuki sebepler kapsamında işlenebilir. Hizmet sağlayıcılarına veya yetkili kamu kurumlarına aktarım, ilgili hukuki şartlara göre yapılabilir.</p>
+<h3>5. İlgili kişinin hakları</h3>
+<p>KVKK'nın 11. maddesi kapsamında kişisel verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltme veya silme şartlarının oluşması hâlinde başvurma ve kanundaki diğer haklarınızı kullanma imkânınız vardır.</p>
+<p>Başvuru yöntemi ve iletişim bilgileri, işletmecinin gerçek bilgileri eklenerek tamamlanmalıdır.</p>
+`
+},
+cookies:{
+title:"Çerez Politikası",
+html:`
+<p>Çerezler, internet sitesinin çalışması ve kullanıcı deneyiminin iyileştirilmesi amacıyla tarayıcıda saklanabilen küçük veri dosyalarıdır.</p>
+<h3>Çerez kullanımı</h3>
+<p>PAZARYERİ.COM'un mevcut sürümünde kullanılan teknik altyapı ve üçüncü taraf hizmetler doğrultusunda zorunlu çerezler veya benzeri teknolojiler kullanılabilir.</p>
+<h3>Kontrol</h3>
+<p>Tarayıcı ayarlarınızdan çerezleri görüntüleyebilir, silebilir veya engelleyebilirsiniz. Zorunlu teknik işlevlerin engellenmesi sitenin bazı özelliklerinin çalışmasını etkileyebilir.</p>
+<p>Analitik veya reklam çerezleri kullanılmaya başlanırsa gerekli bilgilendirme ve izin mekanizmaları ayrıca düzenlenmelidir.</p>
+`
+},
+listing:{
+title:"İlan Yayınlama Kuralları",
+html:`
+<p>İlan veren kullanıcı aşağıdaki kurallara uymayı kabul eder:</p>
+<ul>
+<li>Ürün adı, marka, açıklama, fiyat ve fotoğraflar gerçeğe uygun olmalıdır.</li>
+<li>Kullanıcı, ürünü satışa sunma hakkına sahip olmalıdır.</li>
+<li>Sahte, çalıntı, taklit veya hukuka aykırı ürünler ilan edilemez.</li>
+<li>Yasalarca satışı yasaklanmış veya özel izne tabi ürünler gerekli şartlar sağlanmadan yayımlanamaz.</li>
+<li>Başkasına ait fotoğraf, marka, logo veya içerikler hukuka aykırı biçimde kullanılamaz.</li>
+<li>Yanıltıcı fiyat, sahte stok veya gerçeğe aykırı ürün durumu belirtilemez.</li>
+<li>Platform, kurallara aykırı ilanları inceleyebilir ve gerekli işlemleri yapabilir.</li>
+</ul>
+<h3>Kargo ve teslimat</h3>
+<p>Kargo firması, gönderim yöntemi, teslimat ve kargo ücreti alıcı ile satıcı tarafından kararlaştırılır. Platform kargo hizmeti sunmaz. Bununla birlikte platformun mevzuattan doğan yükümlülükleri saklıdır.</p>
+`
+}
+};
+
+function openLegal(key){
+ const doc=legalDocuments[key];if(!doc)return;
+ $("legalTitle").textContent=doc.title;
+ $("legalContent").innerHTML=doc.html;
+ show("legalModal");
+}
+document.querySelectorAll("[data-legal]").forEach(a=>a.addEventListener("click",e=>{
+ e.preventDefault();openLegal(a.dataset.legal);
+}));
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>hide(b.dataset.close));
 document.querySelectorAll(".modal").forEach(m=>m.onclick=e=>{if(e.target===m)hide(m.id)});
 
@@ -195,7 +333,7 @@ async function loadCategories(){
 
 async function loadProducts(){
  const {data,error}=await supabaseClient.from("listings")
- .select("id,title,brand,description,price,condition,created_at,categories(name),listing_images(storage_path,display_order)")
+ .select("id,category_id,title,brand,description,price,condition,created_at,categories(name),listing_images(storage_path,display_order)")
  .eq("status","active").order("created_at",{ascending:false}).limit(500);
  if(error){console.error(error);$("products").innerHTML='<div class="empty">Ürünler yüklenemedi: '+escapeHTML(error.message)+'</div>';return}
  products=(data||[]).map(p=>{
@@ -216,6 +354,7 @@ function render(){
  if($("sort").value==="desc")list.sort((a,b)=>b.price-a.price);
  $("count").textContent=list.length+" ürün";
  const pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+ if(page>pages)page=pages;
  const shown=list.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
  $("products").innerHTML=shown.length?shown.map(p=>{
   const img=p.urls[0]||"";
@@ -254,28 +393,48 @@ function syncAuthForm(){
  $("typeField").style.display=register?"grid":"none";
  $("nameField").style.display=register&&!corporate?"grid":"none";
  $("companyField").style.display=register&&corporate?"grid":"none";
+ $("registrationAcceptance").style.display=register?"block":"none";
  $("authSubmit").textContent=register?"Kayıt ol":"Giriş yap";
  $("authMessage").textContent="";
 }
 $("authMode").onchange=syncAuthForm;
 $("accountType").onchange=syncAuthForm;
 
-$("authButton").onclick=()=>{
- if(currentUser){loadMyListings();show("myAccountModal");return}
+$("authButton").onclick=async()=>{
+ if(currentUser){
+  if(confirm("Hesabından çıkış yapmak istiyor musun?")){
+   const {error}=await supabaseClient.auth.signOut();
+   if(error)alert(error.message);
+   else await updateUser();
+  }
+  return;
+ }
  show("authModal");
 };
+
 $("authSubmit").onclick=async()=>{
  const msg=$("authMessage");msg.className="status";msg.textContent="İşlem yapılıyor...";
  const email=$("email").value.trim(),password=$("password").value;
  try{
   if(!email||!password)throw Error("E-posta ve şifre gir.");
   if($("authMode").value==="register"){
+   if(!$("termsAccepted").checked)throw Error("Üyelik için Kullanım Koşulları'nı kabul etmelisin.");
    if(password.length<6)throw Error("Şifre en az 6 karakter olmalı.");
    const type=$("accountType").value;
    const fullName=$("fullName").value.trim(),companyName=$("companyName").value.trim();
    if(type==="individual"&&!fullName)throw Error("Ad soyad gir.");
    if(type==="corporate"&&!companyName)throw Error("Şirket adını gir.");
-   const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{account_type:type,full_name:fullName,company_name:companyName}}});
+   const {data,error}=await supabaseClient.auth.signUp({
+    email,password,
+    options:{data:{
+     account_type:type,
+     full_name:fullName,
+     company_name:companyName,
+     terms_accepted:true,
+     terms_version:"1.0",
+     terms_accepted_at:new Date().toISOString()
+    }}
+   });
    if(error)throw error;
    msg.textContent=data.session?"Kayıt başarılı.":"Kayıt oluşturuldu. E-postana gelen doğrulama bağlantısına tıkla.";
   }else{
@@ -289,7 +448,7 @@ $("authSubmit").onclick=async()=>{
 async function updateUser(){
  const {data}=await supabaseClient.auth.getSession();
  currentUser=data.session?.user||null;
- $("authButton").textContent=currentUser?"Hesabım":"Giriş / Kayıt";
+ $("authButton").textContent=currentUser?"Çıkış yap":"Giriş / Kayıt";
  $("myPanel").style.display=currentUser?"block":"none";
  if(currentUser)await loadMyListings();
 }
@@ -309,6 +468,7 @@ $("refreshMine").onclick=loadMyListings;
 
 $("sellButton").onclick=()=>{
  if(!currentUser){show("authModal");return}
+ $("listingAccepted").checked=false;
  show("listingModal");
 };
 
@@ -317,6 +477,7 @@ $("listingForm").onsubmit=async e=>{
  const msg=$("listingMessage");msg.className="status";msg.textContent="İlan kaydediliyor...";
  try{
   if(!currentUser)throw Error("Önce giriş yapmalısın.");
+  if(!$("listingAccepted").checked)throw Error("İlan Yayınlama Kuralları'nı kabul etmelisin.");
   const files=Array.from($("photos").files||[]);
   if(files.length>5)throw Error("En fazla 5 fotoğraf seçebilirsin.");
   for(const f of files){
@@ -360,6 +521,7 @@ $("condition").onchange=()=>{page=1;render()};
 $("sort").onchange=()=>{page=1;render()};
 
 async function init(){
+ syncAuthForm();
  await updateUser();
  await loadCategories();
  await loadProducts();
