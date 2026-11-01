@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAZARYERİ.COM | Yönetici Paneli</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#101114;--panel:#1b1d22;--line:#30343d;--text:#f5f5f5;--muted:#a5a9b2;--orange:#ff8a24;--green:#20b26b;--red:#e34b4b}
+body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{background:#191b20;border-bottom:1px solid var(--line);padding:17px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-size:21px;font-weight:900;color:var(--orange)}
+header small{color:var(--muted)}
+button{border:0;border-radius:8px;padding:11px 15px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.logout{background:#333;color:white}
+main{max-width:1150px;margin:25px auto;padding:0 16px}
+h1{font-size:25px;margin-bottom:7px}
+.subtitle{color:var(--muted);margin-bottom:22px;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:25px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.stat strong{display:block;font-size:27px;margin-bottom:5px}
+.stat span{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.toolbar input,.toolbar select,.login input{background:var(--panel);border:1px solid var(--line);color:white;border-radius:8px;padding:12px;min-width:0}
+.toolbar input{flex:1}
+.toolbar select{min-width:150px}
+.list{display:grid;gap:14px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px;display:grid;grid-template-columns:145px 1fr;gap:17px}
+.photo{width:145px;height:145px;background:#292b31;border-radius:9px;object-fit:cover}
+.no-photo{width:145px;height:145px;background:#292b31;border-radius:9px;display:grid;place-items:center;color:var(--muted);font-size:12px}
+.info h3{font-size:18px;margin-bottom:8px;overflow-wrap:anywhere}
+.meta{font-size:13px;color:var(--muted);line-height:1.8}
+.description{font-size:14px;line-height:1.5;margin:9px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.price{font-size:19px;font-weight:bold;color:var(--orange);margin:8px 0}
+.status{display:inline-block;border-radius:20px;padding:5px 10px;font-size:12px;font-weight:bold;margin:5px 0}
+.pending{background:#59431b;color:#ffd16b}
+.active{background:#174b35;color:#7ce0ad}
+.rejected{background:#572727;color:#ff9c9c}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.approve{background:var(--green);color:white}
+.reject{background:var(--red);color:white}
+.refresh{background:#333;color:white}
+.message{background:var(--panel);border:1px solid var(--line);padding:18px;border-radius:10px;color:var(--muted)}
+.login{max-width:400px;margin:75px auto;padding:25px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.login h2{margin-bottom:8px}
+.login p{color:var(--muted);font-size:14px;margin-bottom:18px}
+.login input{width:100%;margin-bottom:12px}
+.login button{width:100%;background:var(--orange);color:#111}
+#loginMessage{color:#ff9999;font-size:13px;margin-top:12px}
+.hidden{display:none!important}
+@media(max-width:600px){
+ .stats{grid-template-columns:1fr 1fr}
+ .stat:last-child{grid-column:span 2}
+ .item{grid-template-columns:1fr}
+ .photo,.no-photo{width:100%;height:210px}
+ h1{font-size:22px}
+ .toolbar select{flex:1}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">PAZARYERİ.COM</div>
+ <div>
+  <small>YÖNETİCİ PANELİ</small>
+  <button class="logout hidden" id="logout">Çıkış</button>
+ </div>
+</header>
+
+<section class="login" id="loginBox">
+ <h2>Yönetici Girişi</h2>
+ <p>Yönetici hesabınla giriş yap.</p>
+ <form id="loginForm">
+  <input id="email" type="email" placeholder="E-posta adresin" required>
+  <input id="password" type="password" placeholder="Şifren" required>
+  <button type="submit" id="loginButton">Giriş Yap</button>
+ </form>
+ <div id="loginMessage"></div>
+</section>
+
+<main id="dashboard" class="hidden">
+ <h1>Yönetim Paneli</h1>
+ <p class="subtitle">İlanları incele, onayla veya reddet.</p>
+
+ <section class="stats">
+  <div class="stat"><strong id="totalCount">0</strong><span>Toplam ilan</span></div>
+  <div class="stat"><strong id="pendingCount">0</strong><span>Onay bekleyen</span></div>
+  <div class="stat"><strong id="activeCount">0</strong><span>Yayındaki ilan</span></div>
+ </section>
+
+ <div class="toolbar">
+  <input id="search" placeholder="İlan veya satıcı ara...">
+  <select id="statusFilter">
+   <option value="pending">Onay bekleyenler</option>
+   <option value="all">Tüm ilanlar</option>
+   <option value="active">Yayındaki ilanlar</option>
+   <option value="rejected">Reddedilenler</option>
+  </select>
+  <button class="refresh" id="refresh">Yenile</button>
+ </div>
+
+ <div id="message" class="message">İlanlar yükleniyor...</div>
+ <div id="listingContainer" class="list"></div>
+</main>
+
+<script>
+const SUPABASE_URL = "https://vpdvsobpvqdwhtvqhrat.supabase.co";
+const SUPABASE_KEY = "sb_publishable_2QkN3JRkRLsyMW_fkVMV6Q_nEODjfAB";
+
+const client = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+
+let listings = [];
+let profiles = {};
+let images = {};
+
+function escapeHTML(value){
+ return String(value ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+ }[c]));
+}
+
+function money(value){
+ return new Intl.NumberFormat("tr-TR",{
+  style:"currency",currency:"TRY",maximumFractionDigits:2
+ }).format(Number(value)||0);
+}
+
+function statusText(status){
+ return status==="active"?"Yayında":
+ status==="rejected"?"Reddedildi":"Onay bekliyor";
+}
+
+function getSeller(id){
+ const p=profiles[id]||{};
+ return p.company_name || p.full_name || "İsimsiz kullanıcı";
+}
+
+function getImage(row){
+ const list=images[row.id]||[];
+ if(!list.length)return null;
+
+ const photo=list[0];
+ const direct=photo.image_url || photo.url || photo.public_url;
+ if(direct)return direct;
+
+ const path=photo.storage_path || photo.image_path || photo.path || photo.file_path;
+ if(path){
+  return client.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+ }
+ return null;
+}
+
+async function checkAdmin(){
+ const {data,error}=await client.rpc("is_admin");
+ if(error)throw error;
+ if(data!==true)throw new Error("Bu hesap yönetici olarak yetkilendirilmemiş.");
+}
+
+async function loadListings(){
+ $("message").textContent="İlanlar yükleniyor...";
+ $("listingContainer").innerHTML="";
+
+ const {data,error}=await client.from("listings")
+  .select("*")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  $("message").textContent="İlanlar yüklenemedi: "+error.message;
+  return;
+ }
+
+ listings=data||[];
+
+ const sellerIds=[...new Set(listings.map(x=>x.seller_id).filter(Boolean))];
+ const listingIds=listings.map(x=>x.id);
+
+ profiles={};
+ images={};
+
+ if(sellerIds.length){
+  const p=await client.from("profiles").select("*").in("id",sellerIds);
+  if(!p.error)(p.data||[]).forEach(x=>profiles[x.id]=x);
+ }
+
+ if(listingIds.length){
+  const im=await client.from("listing_images").select("*").in("listing_id",listingIds);
+  if(!im.error){
+   (im.data||[]).forEach(x=>{
+    if(!images[x.listing_id])images[x.listing_id]=[];
+    images[x.listing_id].push(x);
+   });
+  }
+ }
+
+ $("totalCount").textContent=listings.length;
+ $("pendingCount").textContent=listings.filter(x=>x.status==="pending").length;
+ $("activeCount").textContent=listings.filter(x=>x.status==="active").length;
+
+ renderListings();
+}
+
+function renderListings(){
+ const filter=$("statusFilter").value;
+ const term=$("search").value.toLocaleLowerCase("tr-TR").trim();
+
+ const filtered=listings.filter(p=>{
+  const matchesStatus=filter==="all"||p.status===filter;
+  const text=[p.title,p.brand,p.description,getSeller(p.seller_id)]
+   .join(" ").toLocaleLowerCase("tr-TR");
+  return matchesStatus&&text.includes(term);
+ });
+
+ $("message").textContent=filtered.length?
+  filtered.length+" ilan gösteriliyor.":
+  "Bu filtrede ilan bulunamadı.";
+
+ $("listingContainer").innerHTML=filtered.map(p=>{
+  const photo=getImage(p);
+  const seller=profiles[p.seller_id]||{};
+  const accountType=seller.account_type==="corporate"?"Kurumsal":"Bireysel";
+  const category=p.categories?.name || p.category || "Kategori belirtilmemiş";
+
+  return `
+   <article class="item">
+    ${photo
+     ? `<img class="photo" src="${escapeHTML(photo)}" alt="Ürün fotoğrafı" onerror="this.outerHTML='<div class=&quot;no-photo&quot;>Fotoğraf yüklenemedi</div>'">`
+     : `<div class="no-photo">Fotoğraf bulunamadı</div>`}
+    <div class="info">
+     <h3>${escapeHTML(p.title)}</h3>
+     <div class="price">${money(p.price)}</div>
+     <div class="meta">
+      Satıcı: ${escapeHTML(getSeller(p.seller_id))}<br>
+      Hesap türü: ${accountType}<br>
+      Kategori: ${escapeHTML(category)}<br>
+      Marka: ${escapeHTML(p.brand||"Belirtilmemiş")}<br>
+      Durum: ${escapeHTML(p.condition||"Belirtilmemiş")}
+     </div>
+     <p class="description">${escapeHTML(p.description||"Açıklama yok.")}</p>
+     <span class="status ${escapeHTML(p.status)}">${statusText(p.status)}</span>
+     <div class="actions">
+      ${p.status!=="active"?`<button class="approve" onclick="changeStatus('${p.id}','active')">Onayla</button>`:""}
+      ${p.status!=="rejected"?`<button class="reject" onclick="changeStatus('${p.id}','rejected')">Reddet</button>`:""}
+     </div>
+    </div>
+   </article>`;
+ }).join("");
+}
+
+async function changeStatus(id,newStatus){
+ const label=newStatus==="active"?"yayına almayı":"reddetmeyi";
+ if(!confirm("Bu ilanı "+label+" onaylıyor musun?"))return;
+
+ const {error}=await client.from("listings")
+  .update({status:newStatus})
+  .eq("id",id);
+
+ if(error){
+  alert("İşlem başarısız: "+error.message);
+  return;
+ }
+
+ await loadListings();
+}
+
+window.changeStatus=changeStatus;
+
+async function showDashboard(){
+ try{
+  await checkAdmin();
+  $("loginBox").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+  $("logout").classList.remove("hidden");
+  await loadListings();
+ }catch(error){
+  $("dashboard").classList.add("hidden");
+  $("loginBox").classList.remove("hidden");
+  $("loginMessage").textContent=error.message;
+ }
+}
+
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ $("loginButton").disabled=true;
+ $("loginMessage").textContent="Giriş yapılıyor...";
+
+ const {error}=await client.auth.signInWithPassword({
+  email:$("email").value.trim(),
+  password:$("password").value
+ });
+
+ $("loginButton").disabled=false;
+
+ if(error){
+  $("loginMessage").textContent=error.message;
+  return;
+ }
+
+ await showDashboard();
+});
+
+$("logout").onclick=async()=>{
+ await client.auth.signOut();
+ location.reload();
+};
+
+$("refresh").onclick=loadListings;
+$("search").addEventListener("input",renderListings);
+$("statusFilter").addEventListener("change",renderListings);
+
+client.auth.getSession().then(async({data})=>{
+ if(data.session)await showDashboard();
+});
+</script>
+</body>
+</html>
