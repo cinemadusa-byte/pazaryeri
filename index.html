@@ -7,75 +7,172 @@
 <title>PAZARYERİ.COM</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#101114;--panel:#1b1d22;--line:#30343d;--text:#f5f5f5;--muted:#a5a9b2;--orange:#ff8a24;--blue:#3988ff}
+:root{
+ --bg:#101114;--panel:#1b1d22;--panel2:#22252c;--line:#30343d;
+ --text:#f5f5f5;--muted:#a5a9b2;--orange:#ff8a24;--blue:#3988ff;
+ --header:#17191e;--input:#252830;--soft:#282c34;--shadow:0 12px 35px #0003;
+}
+body[data-theme="light"]{
+ --bg:#f1f3f6;--panel:#fff;--panel2:#f7f8fa;--line:#dfe3e9;
+ --text:#20232a;--muted:#687080;--header:#fff;--input:#f4f5f7;
+ --soft:#eef1f5;--shadow:0 12px 35px #17203312;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+body{
+ background:
+ radial-gradient(ellipse at 10% 10%,#ff8a2410,transparent 35%),
+ radial-gradient(ellipse at 90% 40%,#3988ff0b,transparent 35%),
+ var(--bg);
+ color:var(--text);font-family:Arial,sans-serif;min-height:100vh;
+ transition:background .2s,color .2s;
+}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-header{background:#17191e;border-bottom:1px solid var(--line);padding:15px 4%;display:flex;align-items:center;gap:15px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
-.logo{font-size:24px;font-weight:900;color:white;text-decoration:none;white-space:nowrap}
+header{
+ background:var(--header);border-bottom:1px solid var(--line);
+ padding:14px 4%;display:flex;align-items:center;gap:13px;
+ flex-wrap:wrap;position:sticky;top:0;z-index:5;
+ box-shadow:0 3px 15px #0001;
+}
+.logo{font-size:24px;font-weight:900;color:var(--text);text-decoration:none;white-space:nowrap}
 .logo span{color:var(--orange)}
 .search{display:flex;flex:1;min-width:180px}
-.search input{flex:1;min-width:0;background:#292c33;border:1px solid var(--line);padding:12px;color:white;border-radius:8px 0 0 8px}
-.search button,.primary{background:var(--orange);color:#171717;border:0;padding:12px 17px;font-weight:bold;border-radius:0 8px 8px 0}
-.btn{background:#292c33;border:1px solid var(--line);color:white;padding:11px 14px;border-radius:8px}
-.primary.btn{background:var(--orange);color:#171717;border:0;border-radius:8px}
-main{max-width:1250px;margin:auto;padding:25px 18px}
-.hero{background:linear-gradient(120deg,#202630,#342519);padding:35px;border-radius:15px;margin-bottom:25px}
-.hero h1{font-size:clamp(27px,4vw,42px);margin-bottom:10px}
+.search input{
+ flex:1;min-width:0;background:var(--input);border:1px solid var(--line);
+ padding:12px;color:var(--text);border-radius:9px 0 0 9px;outline:none;
+}
+.search input:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange)}
+.search button,.primary{
+ background:var(--orange);color:#171717;border:0;padding:12px 18px;
+ font-weight:bold;border-radius:0 9px 9px 0;transition:.2s;
+}
+.search button:hover,.primary:hover{background:#ffad58;transform:translateY(-1px)}
+.btn{
+ background:var(--panel2);border:1px solid var(--line);color:var(--text);
+ padding:11px 14px;border-radius:9px;transition:.2s;
+}
+.btn:hover{border-color:var(--orange);color:var(--orange)}
+.primary.btn{background:var(--orange);color:#171717;border:0;border-radius:9px}
+main{max-width:1350px;margin:auto;padding:25px 18px}
+.hero{
+ position:relative;overflow:hidden;
+ background:linear-gradient(115deg,#202630,#342519 65%,#51331c);
+ padding:42px;border-radius:17px;margin-bottom:25px;
+ border:1px solid #ffffff13;box-shadow:var(--shadow);
+}
+.hero:after{
+ content:"";position:absolute;right:-35px;bottom:-100px;width:360px;height:360px;
+ border:35px solid #ffffff0b;border-radius:50%;
+ box-shadow:0 0 0 35px #ffffff06,0 0 0 75px #ffffff04;
+ pointer-events:none;
+}
+.hero-content{position:relative;z-index:1}
+.hero h1{font-size:clamp(27px,4vw,43px);margin-bottom:12px}
 .hero strong{color:var(--orange)}
-.hero p{color:#d0d3da;max-width:650px;line-height:1.6}
-.layout{display:grid;grid-template-columns:220px 1fr;gap:20px}
-aside,.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:12px}
-aside h3{margin-bottom:12px}
-.cat{display:block;width:100%;text-align:left;background:none;border:0;color:#ddd;padding:9px;border-radius:6px}
-.cat:hover,.cat.active{background:#382b1e;color:var(--orange)}
+.hero p{color:#d0d3da;max-width:680px;line-height:1.7}
+.hero-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.hero-points span{
+ background:#ffffff12;border:1px solid #ffffff1c;color:#fff;
+ padding:8px 12px;border-radius:30px;font-size:12px;
+}
+.layout{display:grid;grid-template-columns:230px 1fr;gap:20px}
+aside,.panel{
+ background:var(--panel);border:1px solid var(--line);
+ padding:17px;border-radius:13px;box-shadow:var(--shadow);
+}
+aside{height:max-content;position:sticky;top:90px}
+aside h3{margin-bottom:13px}
+.cat{
+ display:block;width:100%;text-align:left;background:none;border:0;
+ color:var(--text);padding:10px;border-radius:7px;margin:2px 0;
+ transition:.15s;
+}
+.cat:hover,.cat.active{background:#ff8a241c;color:var(--orange)}
 .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
-.filters select,.field input,.field select,.field textarea{background:#252830;color:white;border:1px solid var(--line);padding:11px;border-radius:7px;width:100%}
-.filters select{width:auto;min-width:140px}
-.heading{display:flex;justify-content:space-between;gap:10px;margin-bottom:15px;align-items:center}
+.filters select,.field input,.field select,.field textarea{
+ background:var(--input);color:var(--text);border:1px solid var(--line);
+ padding:11px;border-radius:8px;width:100%;outline:none;
+}
+.filters select{width:auto;min-width:145px}
+.heading{
+ display:flex;justify-content:space-between;gap:10px;
+ margin-bottom:15px;align-items:center;flex-wrap:wrap;
+}
 .heading small{color:var(--muted)}
-.section-block{margin-top:25px}
-.section-note{font-size:13px;color:var(--muted);line-height:1.5;margin:-7px 0 15px}
+.section-block{
+ margin-top:23px;background:var(--panel);border:1px solid var(--line);
+ padding:17px;border-radius:13px;box-shadow:var(--shadow);
+}
+.section-note{font-size:13px;color:var(--muted);line-height:1.6;margin:-7px 0 15px}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.product{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;transition:.15s}
-.product:hover{border-color:var(--orange);transform:translateY(-2px)}
-.product img{width:100%;height:155px;object-fit:cover;background:#292c33}
-.product-info{padding:12px}
-.product-info h3{font-size:15px;min-height:38px;line-height:1.4}
-.price{color:var(--orange);font-size:19px;font-weight:bold;margin:8px 0}
-.meta{font-size:12px;color:var(--muted);line-height:1.5}
-.catalog-tag{display:inline-block;background:#33291e;color:var(--orange);font-size:11px;padding:5px 8px;border-radius:5px;margin-top:9px}
-.seller-tag{display:inline-block;background:#1c3029;color:#45d49a;font-size:11px;padding:5px 8px;border-radius:5px;margin-top:8px}
-.empty{padding:30px;text-align:center;color:var(--muted);background:var(--panel);border-radius:10px;grid-column:1/-1}
-.modal{display:none;position:fixed;inset:0;background:#000c;z-index:10;align-items:center;justify-content:center;padding:15px}
+.product{
+ background:var(--panel2);border:1px solid var(--line);
+ border-radius:11px;overflow:hidden;cursor:pointer;transition:.2s;
+}
+.product:hover{border-color:var(--orange);transform:translateY(-4px);box-shadow:var(--shadow)}
+.product img{width:100%;height:160px;object-fit:cover;background:var(--soft)}
+.product-info{padding:13px}
+.product-info h3{font-size:15px;min-height:40px;line-height:1.4}
+.price{color:var(--orange);font-size:19px;font-weight:bold;margin:9px 0}
+.meta{font-size:12px;color:var(--muted);line-height:1.6}
+.catalog-tag,.seller-tag{
+ display:inline-block;font-size:11px;padding:5px 9px;border-radius:5px;margin-top:9px;
+}
+.catalog-tag{background:#ff8a241c;color:var(--orange)}
+.seller-tag{background:#1c3029;color:#45d49a}
+.empty{
+ padding:30px;text-align:center;color:var(--muted);
+ background:var(--panel2);border:1px dashed var(--line);
+ border-radius:10px;grid-column:1/-1;line-height:1.6;
+}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:10;align-items:center;justify-content:center;padding:15px}
 .modal.show{display:flex}
-.modal-box{position:relative;background:var(--panel);border:1px solid var(--line);padding:23px;border-radius:13px;width:min(600px,100%);max-height:90vh;overflow:auto}
+.modal-box{
+ position:relative;background:var(--panel);border:1px solid var(--line);
+ padding:23px;border-radius:14px;width:min(600px,100%);
+ max-height:90vh;overflow:auto;box-shadow:var(--shadow);
+}
 .modal-box h2{margin-bottom:16px}
-.close{position:absolute;right:13px;top:10px;background:none;border:0;color:white;font-size:26px}
+.close{position:absolute;right:13px;top:10px;background:none;border:0;color:var(--text);font-size:26px}
 .field{display:grid;gap:6px;margin:12px 0}
-.field label{font-size:13px;color:#ddd}
+.field label{font-size:13px;color:var(--text)}
 .field textarea{min-height:90px}
 .field input[type=file]{padding:8px}
-.notice{background:#282d36;color:#cbd0da;padding:11px;border-radius:7px;font-size:13px;margin:12px 0;line-height:1.5}
+.notice{background:var(--soft);color:var(--muted);padding:12px;border-radius:8px;font-size:13px;margin:12px 0;line-height:1.6}
 .status{font-size:13px;color:#45d49a;margin-top:10px}
 .error{color:#ff7777}
 .detail-img{width:100%;max-height:300px;object-fit:contain;margin:10px 0}
-.acceptance{display:flex;align-items:flex-start;gap:9px;background:#252830;border:1px solid var(--line);padding:12px;border-radius:8px;margin:13px 0;font-size:13px;line-height:1.5;color:#ddd}
+.acceptance{display:flex;align-items:flex-start;gap:9px;background:var(--soft);border:1px solid var(--line);padding:12px;border-radius:8px;margin:13px 0;font-size:13px;line-height:1.5;color:var(--text)}
 .acceptance input{margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:var(--orange)}
 .acceptance a,.footer-links a,.legal-link{color:var(--orange);text-decoration:underline;cursor:pointer}
 footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid var(--line);margin-top:35px;line-height:2}
 .footer-links{display:flex;justify-content:center;gap:17px;flex-wrap:wrap;margin-bottom:12px}
 .footer-links a{font-size:13px}
-.legal-content{font-size:14px;line-height:1.7;color:#d5d8df}
+.legal-content{font-size:14px;line-height:1.7;color:var(--text)}
 .legal-content h3{color:var(--orange);margin:18px 0 7px;font-size:16px}
 .legal-content p{margin:8px 0}
 .legal-content ul{padding-left:20px;margin:8px 0}
-.catalog-preview{display:none;width:100%;max-height:170px;object-fit:contain;background:#252830;border-radius:8px;padding:8px;margin-top:8px}
+.catalog-preview{display:none;width:100%;max-height:170px;object-fit:contain;background:var(--soft);border-radius:8px;padding:8px;margin-top:8px}
 .catalog-label{font-size:12px;color:var(--orange);margin-top:4px}
-@media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:700px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}header{gap:9px}.search{order:3;flex-basis:100%}}
-@media(max-width:400px){.grid{gap:8px}.product img{height:120px}.hero{padding:23px}}
+#pager{display:flex;justify-content:center;align-items:center;gap:12px;margin:20px}
+.theme-icon{font-size:17px}
+@media(max-width:1050px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){
+ .layout{grid-template-columns:1fr}
+ aside{position:static}
+ #categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ header{gap:8px}
+ .search{order:3;flex-basis:100%}
+ .hero{padding:27px}
+}
+@media(max-width:400px){
+ .grid{gap:8px}
+ .product img{height:120px}
+ .hero{padding:22px}
+ .product-info{padding:9px}
+ .product-info h3{font-size:13px}
+}
 </style>
 </head>
 <body>
@@ -86,14 +183,20 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <input id="searchInput" placeholder="Ürün veya marka ara...">
 <button type="submit">ARA</button>
 </form>
+<button class="btn" id="themeButton" type="button"><span class="theme-icon">☀</span> Açık tema</button>
 <button class="btn" id="authButton">Giriş / Kayıt</button>
 <button class="primary btn" id="sellButton">+ İlan Ver</button>
 </header>
 
 <main>
 <section class="hero">
+<div class="hero-content">
 <h1>Aradığın ürün <strong>burada.</strong></h1>
 <p>Bireysel ve kurumsal satıcıları bir araya getiren yeni nesil alışveriş pazaryeri. Ürünleri keşfet, fiyatları karşılaştır, satıcınla doğrudan iletişime geç.</p>
+<div class="hero-points">
+<span>Ürün keşfet</span><span>Satıcı ilanlarını incele</span><span>Doğrudan iletişim</span>
+</div>
+</div>
 </section>
 
 <div class="layout">
@@ -116,25 +219,15 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 </select>
 </div>
 
-<!-- KATALOG ÜRÜNLERİ -->
 <section class="section-block">
-<div class="heading">
-<h2>Ürün Kataloğu</h2>
-<small id="catalogHomeCount">Yükleniyor...</small>
-</div>
-<p class="section-note">Ürünleri keşfet. Bunlar katalog kayıtlarıdır; henüz satılık ilan değildir. Satıcı ilanları aşağıda ayrıca listelenir.</p>
-<div class="grid" id="catalogGrid">
-<div class="empty">Katalog ürünleri yükleniyor...</div>
-</div>
+<div class="heading"><h2>Ürün Kataloğu</h2><small id="catalogHomeCount">Yükleniyor...</small></div>
+<p class="section-note">Katalogdaki ürünleri keşfet. Bunlar satılık ilan değildir; satıcı ilanları aşağıda ayrıca listelenir.</p>
+<div class="grid" id="catalogGrid"><div class="empty">Katalog ürünleri yükleniyor...</div></div>
 </section>
 
-<!-- GERÇEK SATICI İLANLARI -->
 <section class="section-block">
-<div class="heading">
-<h2>Satıcı İlanları</h2>
-<small id="count"></small>
-</div>
-<p class="section-note">Kullanıcıların satışa sunduğu ve onaylanarak yayına alınmış gerçek ilanlar.</p>
+<div class="heading"><h2>Satıcı İlanları</h2><small id="count"></small></div>
+<p class="section-note">Kullanıcıların satışa sunduğu ve onaylanarak yayına alınmış ilanlar.</p>
 <div class="grid" id="products"></div>
 </section>
 </section>
@@ -157,91 +250,64 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 © 2026 PAZARYERİ.COM · Geliştirme aşamasındadır.
 </footer>
 
-<div class="modal" id="authModal">
-<div class="modal-box">
+<div class="modal" id="authModal"><div class="modal-box">
 <button class="close" data-close="authModal">×</button>
 <h2>Hesap işlemleri</h2>
-<div class="field"><label>İşlem</label>
-<select id="authMode"><option value="login">Giriş yap</option><option value="register">Kayıt ol</option></select></div>
-<div class="field" id="typeField" style="display:none"><label>Hesap türü</label>
-<select id="accountType"><option value="individual">Bireysel</option><option value="corporate">Kurumsal</option></select></div>
+<div class="field"><label>İşlem</label><select id="authMode"><option value="login">Giriş yap</option><option value="register">Kayıt ol</option></select></div>
+<div class="field" id="typeField" style="display:none"><label>Hesap türü</label><select id="accountType"><option value="individual">Bireysel</option><option value="corporate">Kurumsal</option></select></div>
 <div class="field" id="nameField" style="display:none"><label>Ad soyad</label><input id="fullName"></div>
 <div class="field" id="companyField" style="display:none"><label>Şirket adı</label><input id="companyName"></div>
 <div class="field"><label>E-posta</label><input id="email" type="email"></div>
 <div class="field"><label>Şifre</label><input id="password" type="password" minlength="6"></div>
 <div id="registrationAcceptance" style="display:none">
-<label class="acceptance">
-<input type="checkbox" id="termsAccepted">
-<span><a data-legal="terms">Kullanım Koşulları</a>'nı okudum ve kabul ediyorum.</span>
-</label>
+<label class="acceptance"><input type="checkbox" id="termsAccepted"><span><a data-legal="terms">Kullanım Koşulları</a>'nı okudum ve kabul ediyorum.</span></label>
 <div class="notice"><a data-legal="kvkk">KVKK Aydınlatma Metni</a> ve <a data-legal="privacy">Gizlilik Politikası</a>.</div>
 </div>
 <div class="notice">E-posta doğrulaması açıksa kayıt sonrasında e-postana gelen bağlantıya tıklamalısın.</div>
 <button class="primary btn" style="width:100%" id="authSubmit">Giriş yap</button>
 <div id="authMessage" class="status"></div>
-</div>
-</div>
+</div></div>
 
-<div class="modal" id="listingModal">
-<div class="modal-box">
+<div class="modal" id="listingModal"><div class="modal-box">
 <button class="close" data-close="listingModal">×</button>
 <h2>Yeni ilan oluştur</h2>
 <form id="listingForm">
-
-<div class="field">
-<label>1. Kategori seç</label>
-<select id="category" required></select>
-</div>
-
+<div class="field"><label>1. Kategori seç</label><select id="category" required></select></div>
 <div class="field">
 <label>2. Katalogda ürün ara</label>
 <input id="catalogSearch" placeholder="Örn. iPhone, matkap, gübre...">
-<select id="catalogProduct">
-<option value="">Önce kategori seç veya ürün ara</option>
-</select>
+<select id="catalogProduct"><option value="">Önce kategori seç veya ürün ara</option></select>
 <small class="catalog-label" id="catalogCount"></small>
 <img id="catalogPreview" class="catalog-preview" alt="Katalog ürün görseli">
 </div>
-
 <div class="field"><label>Ürün adı</label><input id="title" required maxlength="120"></div>
 <div class="field"><label>Marka</label><input id="brand" maxlength="80"></div>
 <div class="field"><label>Fiyat (TL)</label><input id="price" type="number" min="1" required></div>
 <div class="field"><label>Durum</label><select id="itemCondition"><option value="new">Sıfır</option><option value="used">İkinci el</option></select></div>
 <div class="field"><label>Açıklama</label><textarea id="description" required maxlength="4000"></textarea></div>
 <div class="field"><label>Fotoğraflar (en fazla 5, her biri en fazla 2 MB)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple></div>
-
-<label class="acceptance">
-<input type="checkbox" id="listingAccepted" required>
-<span><a data-legal="listing">İlan Yayınlama Kuralları</a>'nı okudum ve kabul ediyorum. Ürün bilgilerinin doğru olduğunu, satışa sunma hakkına sahip olduğumu ve yasaklı ürün ilanı vermediğimi beyan ederim.</span>
-</label>
+<label class="acceptance"><input type="checkbox" id="listingAccepted" required><span><a data-legal="listing">İlan Yayınlama Kuralları</a>'nı okudum ve kabul ediyorum. Ürün bilgilerinin doğru olduğunu, satışa sunma hakkına sahip olduğumu ve yasaklı ürün ilanı vermediğimi beyan ederim.</span></label>
 <div class="notice">Kargo, teslimat yöntemi ve kargo ücreti alıcı ile satıcı tarafından kendi aralarında belirlenir. PAZARYERİ.COM kargo hizmeti sunmaz. Kanuni yükümlülükler saklıdır.</div>
 <button class="primary btn" type="submit" style="width:100%">İlanı gönder</button>
 <div id="listingMessage" class="status"></div>
 </form>
-</div>
-</div>
+</div></div>
 
-<div class="modal" id="detailModal">
-<div class="modal-box">
-<button class="close" data-close="detailModal">×</button>
-<div id="detailContent"></div>
-</div>
-</div>
+<div class="modal" id="detailModal"><div class="modal-box">
+<button class="close" data-close="detailModal">×</button><div id="detailContent"></div>
+</div></div>
 
-<div class="modal" id="legalModal">
-<div class="modal-box">
+<div class="modal" id="legalModal"><div class="modal-box">
 <button class="close" data-close="legalModal">×</button>
-<h2 id="legalTitle">Bilgilendirme</h2>
-<div class="legal-content" id="legalContent"></div>
-</div>
-</div>
+<h2 id="legalTitle">Bilgilendirme</h2><div class="legal-content" id="legalContent"></div>
+</div></div>
 
 <script>
 const SUPABASE_URL="https://vpdvsobpvqdwhtvqhrat.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_2QkN3JRkRLsyMW_fkVMV6Q_nEODjfAB";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-
 const $=id=>document.getElementById(id);
+
 let currentUser=null,categories=[],products=[],catalogProducts=[],selectedCatalog=null,activeCategory="",page=1;
 const PAGE_SIZE=24;
 
@@ -253,6 +319,24 @@ function money(value){
 }
 function show(id){$(id).classList.add("show")}
 function hide(id){$(id).classList.remove("show")}
+function normalizeText(s){
+ return String(s||"").toLocaleLowerCase("tr-TR").trim()
+ .normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+
+/* TEMA */
+function setTheme(theme){
+ document.body.dataset.theme=theme;
+ const light=theme==="light";
+ $("themeButton").innerHTML=light?'<span class="theme-icon">☾</span> Koyu tema':'<span class="theme-icon">☀</span> Açık tema';
+ try{localStorage.setItem("pazaryeri-theme",theme)}catch(e){}
+}
+$("themeButton").onclick=()=>{
+ setTheme(document.body.dataset.theme==="light"?"dark":"light");
+};
+try{
+ setTheme(localStorage.getItem("pazaryeri-theme")||"dark");
+}catch(e){setTheme("dark")}
 
 const legalDocuments={
 terms:{title:"Kullanım Koşulları",html:`<p>PAZARYERİ.COM, kullanıcıların ürün ilanı oluşturmasına, ilanları incelemesine ve alıcılarla satıcıların iletişim kurmasına imkân sağlayan çevrim içi pazaryeri platformudur.</p><h3>Platformun rolü</h3><p>Platform, aksi ayrıca belirtilmedikçe ürünlerin satıcısı değildir. Ürün satışına ilişkin sözleşme alıcı ile satıcı arasında kurulur. Platformun aracılık faaliyetinden doğan kanuni yükümlülükleri saklıdır.</p><h3>Kullanıcı sorumlulukları</h3><p>Kullanıcılar doğru bilgi vermeli, hukuka aykırı veya yasaklı ürün ilanı yayımlamamalı ve yürürlükteki mevzuata uymalıdır.</p><h3>Kargo ve teslimat</h3><p>Ürün bedeli, ödeme yöntemi, kargo firması, teslimat yöntemi ve kargo ücreti alıcı ile satıcı tarafından kararlaştırılır. Platform kargo hizmeti sunmaz. Kanuni yükümlülükler saklıdır.</p>`},
@@ -269,9 +353,10 @@ document.querySelectorAll("[data-legal]").forEach(a=>a.addEventListener("click",
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>hide(b.dataset.close));
 document.querySelectorAll(".modal").forEach(m=>m.onclick=e=>{if(e.target===m)hide(m.id)});
 
+/* KATEGORİLER */
 async function loadCategories(){
  const {data,error}=await supabaseClient.from("categories").select("id,name").order("name");
- if(error){console.error(error);return}
+ if(error){console.error(error);$("categories").innerHTML='<div class="empty">Kategoriler yüklenemedi.</div>';return}
  categories=data||[];
  $("categories").innerHTML='<button class="cat active" data-id="">Tüm kategoriler</button>'+
  categories.map(c=>`<button class="cat" data-id="${c.id}">${escapeHTML(c.name)}</button>`).join("");
@@ -284,14 +369,30 @@ async function loadCategories(){
  });
 }
 
-/* KATALOG VERİLERİNİ SUPABASE'DEN AL */
+/* KATEGORİ EŞLEŞTİRME */
+function categoryMatches(productCategory,selectedCategory){
+ const a=normalizeText(productCategory),b=normalizeText(selectedCategory);
+ if(!a||!b)return false;
+ if(a===b)return true;
+ const aliases={
+  "bilgisayar":["pc","laptop","masaustu","notebook"],
+  "telefon":["cep telefonu","akilli telefon","mobile"],
+  "televizyon":["tv"],
+  "oyun":["oyun konsolu","playstation","xbox"],
+  "hirdavat":["el aletleri","alet edevat"],
+  "tarim":["ziraat","bahce","tarimsal"],
+  "elektronik":["telefon","bilgisayar","televizyon","oyun"]
+ };
+ if(aliases[b]?.some(x=>a.includes(x)||x.includes(a)))return true;
+ return a.includes(b)||b.includes(a);
+}
+
+/* KATALOG */
 async function loadCatalog(){
  $("catalogHomeCount").textContent="Yükleniyor...";
  const {data,error}=await supabaseClient.from("catalog_products")
  .select("id,name,brand,category,description,image_url")
- .eq("is_active",true)
- .order("name");
-
+ .eq("is_active",true).order("name");
  if(error){
   console.error("Katalog yükleme hatası:",error);
   $("catalogHomeCount").textContent="Yüklenemedi";
@@ -299,146 +400,82 @@ async function loadCatalog(){
   $("catalogCount").textContent="Katalog yüklenemedi.";
   return;
  }
-
  catalogProducts=data||[];
- $("catalogHomeCount").textContent=catalogProducts.length+" ürün";
- updateCatalogOptions();
- renderCatalog();
+ updateCatalogOptions();renderCatalog();
 }
 
-/* TÜRKÇE KARAKTERLİ ARAMA */
-function normalizeText(s){
- return String(s||"").toLocaleLowerCase("tr-TR").trim()
- .normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-}
-
-/* KATALOG KARTLARINI ANA SAYFADA GÖSTER */
 function renderCatalog(){
  let list=[...catalogProducts];
-
  if(activeCategory){
   const category=categories.find(c=>String(c.id)===String(activeCategory));
-  if(category){
-   const matching=list.filter(p=>normalizeText(p.category)===normalizeText(category.name));
-   list=matching;
-  }
+  list=category?list.filter(p=>categoryMatches(p.category,category.name)):[];
  }
-
  const q=normalizeText($("searchInput").value);
- if(q){
-  list=list.filter(p=>normalizeText((p.name||"")+" "+(p.brand||"")+" "+(p.category||"")).includes(q));
- }
-
+ if(q)list=list.filter(p=>normalizeText((p.name||"")+" "+(p.brand||"")+" "+(p.category||"")).includes(q));
  $("catalogHomeCount").textContent=list.length+" ürün";
-
  $("catalogGrid").innerHTML=list.length?list.map(p=>{
   const image=p.image_url
    ?`<img src="${escapeHTML(p.image_url)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none'">`
-   :`<div style="height:155px;background:#292c33;display:grid;place-items:center;color:#a5a9b2">Görsel yok</div>`;
-
+   :`<div style="height:160px;background:var(--soft);display:grid;place-items:center;color:var(--muted)">Görsel yok</div>`;
   return `<article class="product catalog-card" data-catalog-id="${p.id}">
-   ${image}
-   <div class="product-info">
-    <h3>${escapeHTML(p.name)}</h3>
-    <div class="meta">${escapeHTML(p.category||"Diğer")}${p.brand?" · "+escapeHTML(p.brand):""}</div>
-    <span class="catalog-tag">Katalog ürünü</span>
-   </div>
-  </article>`;
- }).join(""):'<div class="empty">Bu aramada katalog ürünü bulunamadı.</div>';
-
- document.querySelectorAll(".catalog-card").forEach(el=>{
-  el.onclick=()=>openCatalogDetail(el.dataset.catalogId);
- });
+   ${image}<div class="product-info"><h3>${escapeHTML(p.name)}</h3>
+   <div class="meta">${escapeHTML(p.category||"Diğer")}${p.brand?" · "+escapeHTML(p.brand):""}</div>
+   <span class="catalog-tag">Katalog ürünü</span></div></article>`;
+ }).join(""):'<div class="empty">Bu kategoride katalog ürünü bulunamadı.</div>';
+ document.querySelectorAll(".catalog-card").forEach(el=>el.onclick=()=>openCatalogDetail(el.dataset.catalogId));
 }
 
-/* KATALOG ÜRÜNÜNÜN DETAYI */
 function openCatalogDetail(id){
- const p=catalogProducts.find(x=>String(x.id)===String(id));
- if(!p)return;
-
- const img=p.image_url
-  ?`<img class="detail-img" src="${escapeHTML(p.image_url)}" alt="${escapeHTML(p.name)}">`
-  :"";
-
+ const p=catalogProducts.find(x=>String(x.id)===String(id));if(!p)return;
+ const img=p.image_url?`<img class="detail-img" src="${escapeHTML(p.image_url)}" alt="${escapeHTML(p.name)}">`:"";
  $("detailContent").innerHTML=`
- <h2>${escapeHTML(p.name)}</h2>
- ${img}
+ <h2>${escapeHTML(p.name)}</h2>${img}
  <span class="catalog-tag">Katalog ürünü</span>
  <p class="meta" style="margin-top:12px">${escapeHTML(p.category||"Diğer")}${p.brand?" · "+escapeHTML(p.brand):""}</p>
  <p style="margin-top:15px;white-space:pre-wrap">${escapeHTML(p.description||"Bu ürün için henüz açıklama eklenmemiş.")}</p>
- <div class="notice">Bu bir katalog kaydıdır, satılık ilan değildir. Bu ürünü satmak isteyen kullanıcılar giriş yaparak kendi fiyatları ve fotoğraflarıyla ilan oluşturabilir.</div>
- <button class="primary btn" style="width:100%" id="catalogSellButton">Bu ürünü satışa çıkar</button>
- `;
-
+ <div class="notice">Bu bir katalog kaydıdır, satılık ilan değildir. Satmak isteyen kullanıcılar kendi fiyatları ve fotoğraflarıyla ilan oluşturabilir.</div>
+ <button class="primary btn" style="width:100%" id="catalogSellButton">Bu ürünü satışa çıkar</button>`;
  show("detailModal");
-
  $("catalogSellButton").onclick=()=>{
   hide("detailModal");
   if(!currentUser){show("authModal");return}
-  $("listingForm").reset();
-  selectedCatalog=null;
+  $("listingForm").reset();selectedCatalog=null;
   $("listingAccepted").checked=false;
   $("catalogSearch").value=p.name;
-  updateCatalogOptions();
-  $("catalogProduct").value=String(p.id);
-  chooseCatalogProduct();
-  show("listingModal");
+  updateCatalogOptions().then(()=>{
+   $("catalogProduct").value=String(p.id);chooseCatalogProduct();show("listingModal");
+  });
  };
 }
 
-/* İLAN VERME FORMUNDA KATALOG SEÇİMİ */
+/* İLAN FORMUNDA KATALOG */
 async function updateCatalogOptions(){
  const categoryId=$("category").value;
  const category=categories.find(c=>String(c.id)===String(categoryId));
  const q=normalizeText($("catalogSearch").value);
  let list=[...catalogProducts];
-
- if(category){
-  const matching=list.filter(p=>normalizeText(p.category)===normalizeText(category.name));
-  if(matching.length)list=matching;
- }
-
- if(q){
-  list=list.filter(p=>normalizeText((p.name||"")+" "+(p.brand||"")+" "+(p.category||"")).includes(q));
- }
-
+ if(category)list=list.filter(p=>categoryMatches(p.category,category.name));
+ if(q)list=list.filter(p=>normalizeText((p.name||"")+" "+(p.brand||"")+" "+(p.category||"")).includes(q));
  $("catalogProduct").innerHTML='<option value="">Katalogdan ürün seç</option>'+
  list.map(p=>`<option value="${p.id}">${escapeHTML(p.name)}${p.brand?" — "+escapeHTML(p.brand):""}</option>`).join("");
-
  $("catalogCount").textContent=list.length+" ürün bulundu.";
 }
-
 function chooseCatalogProduct(){
  const id=$("catalogProduct").value;
  selectedCatalog=catalogProducts.find(p=>String(p.id)===String(id))||null;
-
- if(!selectedCatalog){
-  $("catalogPreview").style.display="none";
-  return;
- }
-
+ if(!selectedCatalog){$("catalogPreview").style.display="none";return}
  $("title").value=selectedCatalog.name||"";
  $("brand").value=selectedCatalog.brand||"";
  if(selectedCatalog.description)$("description").value=selectedCatalog.description;
-
- const matchingCategory=categories.find(c=>normalizeText(c.name)===normalizeText(selectedCatalog.category));
+ const matchingCategory=categories.find(c=>categoryMatches(selectedCatalog.category,c.name));
  if(matchingCategory)$("category").value=matchingCategory.id;
-
  if(selectedCatalog.image_url){
-  $("catalogPreview").src=selectedCatalog.image_url;
-  $("catalogPreview").style.display="block";
- }else{
-  $("catalogPreview").style.display="none";
- }
-
- updateCatalogOptions();
- $("catalogProduct").value=selectedCatalog.id;
+  $("catalogPreview").src=selectedCatalog.image_url;$("catalogPreview").style.display="block";
+ }else $("catalogPreview").style.display="none";
+ updateCatalogOptions().then(()=>{$("catalogProduct").value=selectedCatalog.id});
 }
-
 $("category").addEventListener("change",()=>{
- selectedCatalog=null;
- $("catalogPreview").style.display="none";
- updateCatalogOptions();
+ selectedCatalog=null;$("catalogPreview").style.display="none";updateCatalogOptions();
 });
 $("catalogSearch").addEventListener("input",updateCatalogOptions);
 $("catalogProduct").addEventListener("change",chooseCatalogProduct);
@@ -447,71 +484,42 @@ $("catalogProduct").addEventListener("change",chooseCatalogProduct);
 async function loadProducts(){
  const {data,error}=await supabaseClient.from("listings")
  .select("id,category_id,title,brand,description,price,condition,created_at,categories(name),listing_images(storage_path,display_order)")
- .eq("status","active")
- .order("created_at",{ascending:false})
- .limit(500);
-
+ .eq("status","active").order("created_at",{ascending:false}).limit(500);
  if(error){
-  console.error(error);
-  $("products").innerHTML='<div class="empty">İlanlar yüklenemedi: '+escapeHTML(error.message)+'</div>';
-  return;
+  console.error(error);$("products").innerHTML='<div class="empty">İlanlar yüklenemedi: '+escapeHTML(error.message)+'</div>';return;
  }
-
  products=(data||[]).map(p=>{
   const images=(p.listing_images||[]).sort((a,b)=>a.display_order-b.display_order);
-  const urls=images.map(im=>supabaseClient.storage.from("product-images").getPublicUrl(im.storage_path).data.publicUrl);
+  const urls=images.map(im=>im.storage_path?supabaseClient.storage.from("product-images").getPublicUrl(im.storage_path).data.publicUrl:"");
   return {...p,categoryName:p.categories?.name||"Diğer",images,urls};
  });
-
  render();
 }
 
 function render(){
  let list=[...products];
-
- if(activeCategory){
-  list=list.filter(p=>String(p.category_id)===String(activeCategory));
- }
-
+ if(activeCategory)list=list.filter(p=>String(p.category_id)===String(activeCategory));
  const q=$("searchInput").value.trim().toLocaleLowerCase("tr-TR");
- if(q){
-  list=list.filter(p=>(p.title+" "+(p.brand||"")+" "+p.categoryName).toLocaleLowerCase("tr-TR").includes(q));
- }
-
+ if(q)list=list.filter(p=>(p.title+" "+(p.brand||"")+" "+p.categoryName).toLocaleLowerCase("tr-TR").includes(q));
  if($("condition").value)list=list.filter(p=>p.condition===$("condition").value);
  if($("sort").value==="asc")list.sort((a,b)=>a.price-b.price);
  if($("sort").value==="desc")list.sort((a,b)=>b.price-a.price);
-
  $("count").textContent=list.length+" ilan";
-
- const pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
- if(page>pages)page=pages;
-
+ const pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));if(page>pages)page=pages;
  const shown=list.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
-
  $("products").innerHTML=shown.length?shown.map(p=>{
   const img=p.urls[0]||"";
   return `<article class="product seller-card" data-id="${p.id}">
-   ${img?`<img src="${escapeHTML(img)}" alt="${escapeHTML(p.title)}" loading="lazy">`:`<div style="height:155px;background:#292c33;display:grid;place-items:center;color:#a5a9b2">Görsel yok</div>`}
-   <div class="product-info">
-    <h3>${escapeHTML(p.title)}</h3>
-    <div class="price">${money(p.price)}</div>
-    <div class="meta">${escapeHTML(p.categoryName)} · ${p.condition==="new"?"Sıfır":"İkinci el"}</div>
-    <span class="seller-tag">Satıcı ilanı</span>
-   </div>
-  </article>`;
- }).join(""):'<div class="empty">Bu filtrelerde yayında satıcı ilanı bulunmuyor.</div>';
-
- document.querySelectorAll(".seller-card").forEach(el=>{
-  el.onclick=()=>openDetail(el.dataset.id);
- });
-
+   ${img?`<img src="${escapeHTML(img)}" alt="${escapeHTML(p.title)}" loading="lazy">`:`<div style="height:160px;background:var(--soft);display:grid;place-items:center;color:var(--muted)">Görsel yok</div>`}
+   <div class="product-info"><h3>${escapeHTML(p.title)}</h3>
+   <div class="price">${money(p.price)}</div>
+   <div class="meta">${escapeHTML(p.categoryName)} · ${p.condition==="new"?"Sıfır":"İkinci el"}</div>
+   <span class="seller-tag">Satıcı ilanı</span></div></article>`;
+ }).join(""):'<div class="empty">Bu kategoride yayında satıcı ilanı bulunmuyor. Katalog ürünleri yukarıda görüntülenebilir.</div>';
+ document.querySelectorAll(".seller-card").forEach(el=>el.onclick=()=>openDetail(el.dataset.id));
  $("pager")?.remove();
-
  if(pages>1){
-  const nav=document.createElement("div");
-  nav.id="pager";
-  nav.style="display:flex;justify-content:center;gap:10px;margin:20px";
+  const nav=document.createElement("div");nav.id="pager";
   nav.innerHTML=`<button class="btn" ${page===1?"disabled":""} id="prev">Önceki</button><span>${page}/${pages}</span><button class="btn" ${page===pages?"disabled":""} id="next">Sonraki</button>`;
   $("products").after(nav);
   $("prev").onclick=()=>{page--;render()};
@@ -519,24 +527,19 @@ function render(){
  }
 }
 
-/* GERÇEK İLAN DETAYI */
 function openDetail(id){
- const p=products.find(x=>String(x.id)===String(id));
- if(!p)return;
-
+ const p=products.find(x=>String(x.id)===String(id));if(!p)return;
  const img=p.urls[0]||"";
-
  $("detailContent").innerHTML=`
- <h2>${escapeHTML(p.title)}</h2>
- ${img?`<img class="detail-img" src="${escapeHTML(img)}">`:""}
+ <h2>${escapeHTML(p.title)}</h2>${img?`<img class="detail-img" src="${escapeHTML(img)}">`:""}
  <div class="price">${money(p.price)}</div>
  <p class="meta">${escapeHTML(p.categoryName)} · ${p.condition==="new"?"Sıfır":"İkinci el"}</p>
  <p style="margin-top:15px;white-space:pre-wrap">${escapeHTML(p.description||"Açıklama yok.")}</p>
  <div class="notice">Alım, ödeme ve teslimat koşulları alıcı ile satıcı arasında ayrıca kararlaştırılır.</div>`;
-
  show("detailModal");
 }
 
+/* ÜYELİK */
 function syncAuthForm(){
  const register=$("authMode").value==="register";
  const corporate=$("accountType").value==="corporate";
@@ -554,60 +557,33 @@ $("authButton").onclick=async()=>{
  if(currentUser){
   if(confirm("Hesabından çıkış yapmak istiyor musun?")){
    const {error}=await supabaseClient.auth.signOut();
-   if(error)alert(error.message);
-   else await updateUser();
-  }
-  return;
+   if(error)alert(error.message);else await updateUser();
+  }return;
  }
  show("authModal");
 };
-
 $("authSubmit").onclick=async()=>{
- const msg=$("authMessage");
- msg.className="status";
- msg.textContent="İşlem yapılıyor...";
-
- const email=$("email").value.trim();
- const password=$("password").value;
-
+ const msg=$("authMessage");msg.className="status";msg.textContent="İşlem yapılıyor...";
+ const email=$("email").value.trim(),password=$("password").value;
  try{
   if(!email||!password)throw Error("E-posta ve şifre gir.");
-
   if($("authMode").value==="register"){
    if(!$("termsAccepted").checked)throw Error("Kullanım Koşulları'nı kabul etmelisin.");
    if(password.length<6)throw Error("Şifre en az 6 karakter olmalı.");
-
-   const type=$("accountType").value;
-   const fullName=$("fullName").value.trim();
-   const companyName=$("companyName").value.trim();
-
+   const type=$("accountType").value,fullName=$("fullName").value.trim(),companyName=$("companyName").value.trim();
    if(type==="individual"&&!fullName)throw Error("Ad soyad gir.");
    if(type==="corporate"&&!companyName)throw Error("Şirket adını gir.");
-
-   const {data,error}=await supabaseClient.auth.signUp({
-    email,password,
-    options:{data:{
-     account_type:type,
-     full_name:fullName,
-     company_name:companyName,
-     terms_accepted:true,
-     terms_version:"1.0",
-     terms_accepted_at:new Date().toISOString()
-    }}
-   });
-
+   const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{
+    account_type:type,full_name:fullName,company_name:companyName,
+    terms_accepted:true,terms_version:"1.0",terms_accepted_at:new Date().toISOString()
+   }}});
    if(error)throw error;
    msg.textContent=data.session?"Kayıt başarılı.":"Kayıt oluşturuldu. E-postana gelen doğrulama bağlantısına tıkla.";
   }else{
    const {error}=await supabaseClient.auth.signInWithPassword({email,password});
-   if(error)throw error;
-   msg.textContent="Giriş başarılı.";
-   hide("authModal");
+   if(error)throw error;msg.textContent="Giriş başarılı.";hide("authModal");await updateUser();
   }
- }catch(e){
-  msg.className="status error";
-  msg.textContent=e.message;
- }
+ }catch(e){msg.className="status error";msg.textContent=e.message}
 };
 
 async function updateUser(){
@@ -621,17 +597,10 @@ supabaseClient.auth.onAuthStateChange(()=>{setTimeout(updateUser,0)});
 
 async function loadMyListings(){
  if(!currentUser)return;
-
  const {data,error}=await supabaseClient.from("listings")
  .select("id,title,price,status,categories(name)")
- .eq("seller_id",currentUser.id)
- .order("created_at",{ascending:false});
-
- if(error){
-  $("myListings").textContent=error.message;
-  return;
- }
-
+ .eq("seller_id",currentUser.id).order("created_at",{ascending:false});
+ if(error){$("myListings").textContent=error.message;return}
  $("myListings").innerHTML=(data||[]).length?(data||[]).map(p=>
  `<div class="notice"><b>${escapeHTML(p.title)}</b> · ${money(p.price)} · ${p.status==="active"?"Yayında":p.status==="rejected"?"Reddedildi":"Onay bekliyor"}</div>`
  ).join(""):"Henüz ilan vermedin.";
@@ -639,104 +608,58 @@ async function loadMyListings(){
 $("refreshMine").onclick=loadMyListings;
 
 $("sellButton").onclick=()=>{
- if(!currentUser){
-  show("authModal");
-  return;
- }
-
- $("listingForm").reset();
- $("listingAccepted").checked=false;
- selectedCatalog=null;
- $("catalogPreview").style.display="none";
- updateCatalogOptions();
- show("listingModal");
+ if(!currentUser){show("authModal");return}
+ $("listingForm").reset();$("listingAccepted").checked=false;
+ selectedCatalog=null;$("catalogPreview").style.display="none";
+ updateCatalogOptions();show("listingModal");
 };
 
+/* İLAN OLUŞTURMA */
 $("listingForm").onsubmit=async e=>{
  e.preventDefault();
-
- const msg=$("listingMessage");
- msg.className="status";
- msg.textContent="İlan kaydediliyor...";
-
+ const msg=$("listingMessage");msg.className="status";msg.textContent="İlan kaydediliyor...";
  try{
   if(!currentUser)throw Error("Önce giriş yapmalısın.");
   if(!$("listingAccepted").checked)throw Error("İlan Yayınlama Kuralları'nı kabul etmelisin.");
-
   const files=Array.from($("photos").files||[]);
-
   if(files.length>5)throw Error("En fazla 5 fotoğraf seçebilirsin.");
-
   for(const f of files){
    if(!["image/jpeg","image/png","image/webp"].includes(f.type))throw Error("JPG, PNG veya WebP fotoğraf seç.");
    if(f.size>2*1024*1024)throw Error("Her fotoğraf en fazla 2 MB olabilir.");
   }
-
   const payload={
-   seller_id:currentUser.id,
-   category_id:Number($("category").value),
-   title:$("title").value.trim(),
-   brand:$("brand").value.trim(),
-   description:$("description").value.trim(),
-   price:Number($("price").value),
-   condition:$("itemCondition").value,
-   status:"pending"
+   seller_id:currentUser.id,category_id:Number($("category").value),
+   title:$("title").value.trim(),brand:$("brand").value.trim(),
+   description:$("description").value.trim(),price:Number($("price").value),
+   condition:$("itemCondition").value,status:"pending"
   };
-
   if(!payload.category_id)throw Error("Kategori seç.");
   if(!payload.title||!payload.description||payload.price<=0)throw Error("Ürün bilgilerini kontrol et.");
-
   const {data:listing,error}=await supabaseClient.from("listings").insert(payload).select("id").single();
   if(error)throw error;
-
   const imageRows=[];
-
   for(let i=0;i<files.length;i++){
-   const f=files[i];
-   const ext=f.name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+   const f=files[i],ext=f.name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
    const path=`${currentUser.id}/${listing.id}/${Date.now()}-${i}.${ext}`;
-
    const {error:uploadError}=await supabaseClient.storage.from("product-images").upload(path,f,{contentType:f.type});
    if(uploadError)throw uploadError;
-
    imageRows.push({listing_id:listing.id,storage_path:path,display_order:i+1});
   }
-
   if(imageRows.length){
    const {error:imageError}=await supabaseClient.from("listing_images").insert(imageRows);
    if(imageError)throw imageError;
   }
-
   msg.textContent="İlanın kaydedildi. Yönetici onayından sonra yayına alınacak.";
-  $("listingForm").reset();
-  selectedCatalog=null;
-  $("catalogPreview").style.display="none";
+  $("listingForm").reset();selectedCatalog=null;$("catalogPreview").style.display="none";
   await loadMyListings();
-
- }catch(err){
-  msg.className="status error";
-  msg.textContent=err.message;
- }
+ }catch(err){msg.className="status error";msg.textContent=err.message}
 };
 
-/* ARAMA VE FİLTRELER İKİ BÖLÜMÜ DE ETKİLER */
-function applyFilters(){
- page=1;
- renderCatalog();
- render();
-}
-$("searchForm").onsubmit=e=>{
- e.preventDefault();
- applyFilters();
-};
-$("condition").onchange=()=>{
- page=1;
- render();
-};
-$("sort").onchange=()=>{
- page=1;
- render();
-};
+/* ARAMA VE FİLTRELER */
+function applyFilters(){page=1;renderCatalog();render()}
+$("searchForm").onsubmit=e=>{e.preventDefault();applyFilters()};
+$("condition").onchange=()=>{page=1;render()};
+$("sort").onchange=()=>{page=1;render()};
 
 async function init(){
  syncAuthForm();
