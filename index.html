@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17191e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="PAZARYERİ"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon.svg">
 <title>PAZARYERİ.COM</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -173,6 +174,9 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
  .product-info{padding:9px}
  .product-info h3{font-size:13px}
 }
+
+#appBottomNav{display:none}#favoritePanel{display:none;margin-top:20px}.fav-btn{position:absolute;top:9px;right:9px;z-index:2;width:36px;height:36px;border:0;border-radius:50%;background:#111c;color:#fff;font-size:20px}.product{position:relative}.fav-btn.active{color:#ff5b70;background:#fff}
+@media(max-width:700px){body{padding-bottom:78px}#appBottomNav{position:fixed;z-index:20;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:var(--header);border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -5px 22px #0003}#appBottomNav button{border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;min-height:48px}#appBottomNav .nav-icon{font-size:20px;line-height:1}#appBottomNav button.active{color:var(--orange);font-weight:bold}}
 </style>
 </head>
 <body>
@@ -239,6 +243,7 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 </section>
 </main>
 
+<section class="section-block" id="favoritePanel"><div class="heading"><h2>Favorilerim</h2><small id="favoriteCount">0 ürün</small></div><div class="grid" id="favoriteGrid"></div></section>
 <footer>
 <div class="footer-links">
 <a data-legal="terms">Kullanım Koşulları</a>
@@ -303,6 +308,7 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 </div></div>
 
 <script>
+<nav id="appBottomNav" aria-label="Ana gezinme"><button data-nav="home" class="active"><span class="nav-icon">⌂</span>Ana Sayfa</button><button data-nav="categories"><span class="nav-icon">▦</span>Kategoriler</button><button data-nav="favorites"><span class="nav-icon">♡</span>Favoriler</button><button data-nav="sell"><span class="nav-icon">＋</span>İlan Ver</button><button data-nav="account"><span class="nav-icon">♙</span>Hesabım</button></nav>
 const SUPABASE_URL="https://vpdvsobpvqdwhtvqhrat.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_2QkN3JRkRLsyMW_fkVMV6Q_nEODjfAB";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
@@ -417,12 +423,13 @@ function renderCatalog(){
   const image=p.image_url
    ?`<img src="${escapeHTML(p.image_url)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none'">`
    :`<div style="height:160px;background:var(--soft);display:grid;place-items:center;color:var(--muted)">Görsel yok</div>`;
-  return `<article class="product catalog-card" data-catalog-id="${p.id}">
+  return `<article class="product catalog-card" data-catalog-id="${p.id}"><button type="button" class="fav-btn" data-fav-type="catalog" data-fav-id="${p.id}">♡</button>
    ${image}<div class="product-info"><h3>${escapeHTML(p.name)}</h3>
    <div class="meta">${escapeHTML(p.category||"Diğer")}${p.brand?" · "+escapeHTML(p.brand):""}</div>
    <span class="catalog-tag">Katalog ürünü</span></div></article>`;
  }).join(""):'<div class="empty">Bu kategoride katalog ürünü bulunamadı.</div>';
  document.querySelectorAll(".catalog-card").forEach(el=>el.onclick=()=>openCatalogDetail(el.dataset.catalogId));
+ favSync();
 }
 
 function openCatalogDetail(id){
@@ -509,7 +516,7 @@ function render(){
  const shown=list.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
  $("products").innerHTML=shown.length?shown.map(p=>{
   const img=p.urls[0]||"";
-  return `<article class="product seller-card" data-id="${p.id}">
+  return `<article class="product seller-card" data-id="${p.id}"><button type="button" class="fav-btn" data-fav-type="listing" data-fav-id="${p.id}">♡</button>
    ${img?`<img src="${escapeHTML(img)}" alt="${escapeHTML(p.title)}" loading="lazy">`:`<div style="height:160px;background:var(--soft);display:grid;place-items:center;color:var(--muted)">Görsel yok</div>`}
    <div class="product-info"><h3>${escapeHTML(p.title)}</h3>
    <div class="price">${money(p.price)}</div>
@@ -517,6 +524,7 @@ function render(){
    <span class="seller-tag">Satıcı ilanı</span></div></article>`;
  }).join(""):'<div class="empty">Bu kategoride yayında satıcı ilanı bulunmuyor. Katalog ürünleri yukarıda görüntülenebilir.</div>';
  document.querySelectorAll(".seller-card").forEach(el=>el.onclick=()=>openDetail(el.dataset.id));
+ favSync();
  $("pager")?.remove();
  if(pages>1){
   const nav=document.createElement("div");nav.id="pager";
@@ -661,6 +669,23 @@ $("searchForm").onsubmit=e=>{e.preventDefault();applyFilters()};
 $("condition").onchange=()=>{page=1;render()};
 $("sort").onchange=()=>{page=1;render()};
 
+
+function favGet(){try{return JSON.parse(localStorage.getItem("pazaryeri-favorites")||"[]")}catch(e){return []}}
+function favSave(a){try{localStorage.setItem("pazaryeri-favorites",JSON.stringify(a))}catch(e){}}
+function favSync(){document.querySelectorAll(".fav-btn").forEach(b=>{const yes=favGet().some(x=>x.type===b.dataset.favType&&String(x.id)===String(b.dataset.favId));b.classList.toggle("active",yes);b.textContent=yes?"♥":"♡";});}
+function favRender(){
+ const rows=[];favGet().forEach(f=>{const p=f.type==="listing"?products.find(x=>String(x.id)===String(f.id)):catalogProducts.find(x=>String(x.id)===String(f.id));if(p)rows.push({type:f.type,p});});
+ $("favoriteCount").textContent=rows.length+" ürün";
+ $("favoriteGrid").innerHTML=rows.length?rows.map(({type,p})=>{const title=type==="listing"?p.title:p.name,img=type==="listing"?(p.urls?.[0]||""):p.image_url||"",price=type==="listing"?'<div class="price">'+money(p.price)+'</div>':"";return '<article class="product" data-fav-open="'+type+'" data-fav-item="'+p.id+'">'+(img?'<img src="'+escapeHTML(img)+'">':'<div style="height:120px;background:var(--soft)"></div>')+'<div class="product-info"><h3>'+escapeHTML(title)+'</h3>'+price+'</div></article>';}).join(""):'<div class="empty">Henüz favorin yok.</div>';
+ document.querySelectorAll("[data-fav-open]").forEach(el=>el.onclick=()=>el.dataset.favOpen==="listing"?openDetail(el.dataset.favItem):openCatalogDetail(el.dataset.favItem));
+}
+document.addEventListener("click",e=>{const b=e.target.closest(".fav-btn");if(!b)return;e.preventDefault();e.stopPropagation();const a=favGet(),i=a.findIndex(x=>x.type===b.dataset.favType&&String(x.id)===String(b.dataset.favId));if(i>=0)a.splice(i,1);else a.push({type:b.dataset.favType,id:b.dataset.favId});favSave(a);favSync();favRender();},true);
+const appNav=[...document.querySelectorAll("#appBottomNav [data-nav]")];
+appNav.forEach(b=>b.onclick=()=>{appNav.forEach(x=>x.classList.toggle("active",x===b));const a=b.dataset.nav;if(a==="home"){$("favoritePanel").style.display="none";window.scrollTo({top:0,behavior:"smooth"});}if(a==="categories"){$("favoritePanel").style.display="none";$("categories").scrollIntoView({behavior:"smooth"});}if(a==="favorites"){$("favoritePanel").style.display="block";favRender();$("favoritePanel").scrollIntoView({behavior:"smooth"});}if(a==="sell")$("sellButton").click();if(a==="account"){if(currentUser)$("myPanel").scrollIntoView({behavior:"smooth"});else $("authButton").click();}});
+const installBtn=document.createElement("button");installBtn.id="installAppButton";installBtn.className="btn";installBtn.textContent="Uygulamayı yükle";installBtn.style.display="none";document.querySelector("header").appendChild(installBtn);
+let installEvent=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvent=e;installBtn.style.display="inline-flex";});
+installBtn.onclick=async()=>{if(!installEvent){alert("Tarayıcı menüsünden 'Ana ekrana ekle' seçeneğini kullan.");return;}installEvent.prompt();await installEvent.userChoice;installEvent=null;installBtn.style.display="none";};
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));
 async function init(){
  syncAuthForm();
  await updateUser();
