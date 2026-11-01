@@ -62,10 +62,12 @@ aside h3{margin-bottom:12px}
 footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid var(--line);margin-top:35px;line-height:2}
 .footer-links{display:flex;justify-content:center;gap:17px;flex-wrap:wrap;margin-bottom:12px}
 .footer-links a{font-size:13px}
-.legal-content{font-size:14px;line-height:1.7;color:#d5d8df;white-space:normal}
+.legal-content{font-size:14px;line-height:1.7;color:#d5d8df}
 .legal-content h3{color:var(--orange);margin:18px 0 7px;font-size:16px}
 .legal-content p{margin:8px 0}
 .legal-content ul{padding-left:20px;margin:8px 0}
+.catalog-preview{display:none;width:100%;max-height:170px;object-fit:contain;background:#252830;border-radius:8px;padding:8px;margin-top:8px}
+.catalog-label{font-size:12px;color:var(--orange);margin-top:4px}
 @media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}header{gap:9px}.search{order:3;flex-basis:100%}}
 @media(max-width:400px){.grid{gap:8px}.product img{height:120px}.hero{padding:23px}}
@@ -141,15 +143,13 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <div class="field" id="companyField" style="display:none"><label>Şirket adı</label><input id="companyName"></div>
 <div class="field"><label>E-posta</label><input id="email" type="email"></div>
 <div class="field"><label>Şifre</label><input id="password" type="password" minlength="6"></div>
-
 <div id="registrationAcceptance" style="display:none">
 <label class="acceptance">
 <input type="checkbox" id="termsAccepted">
-<span><a data-legal="terms">Kullanım Koşulları</a>'nı okudum ve kabul ediyorum. Üyelik işleminin tamamlanması için bu onay zorunludur.</span>
+<span><a data-legal="terms">Kullanım Koşulları</a>'nı okudum ve kabul ediyorum.</span>
 </label>
-<div class="notice"><a data-legal="kvkk">KVKK Aydınlatma Metni</a> ve <a data-legal="privacy">Gizlilik Politikası</a> hakkında bilgi edinebilirsin.</div>
+<div class="notice"><a data-legal="kvkk">KVKK Aydınlatma Metni</a> ve <a data-legal="privacy">Gizlilik Politikası</a>.</div>
 </div>
-
 <div class="notice">E-posta doğrulaması açıksa kayıt sonrasında e-postana gelen bağlantıya tıklamalısın.</div>
 <button class="primary btn" style="width:100%" id="authSubmit">Giriş yap</button>
 <div id="authMessage" class="status"></div>
@@ -161,10 +161,25 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <button class="close" data-close="listingModal">×</button>
 <h2>Yeni ilan oluştur</h2>
 <form id="listingForm">
+
+<div class="field">
+<label>1. Kategori seç</label>
+<select id="category" required></select>
+</div>
+
+<div class="field">
+<label>2. Katalogda ürün ara</label>
+<input id="catalogSearch" placeholder="Örn. iPhone, matkap, gübre...">
+<select id="catalogProduct">
+<option value="">Önce kategori seç veya ürün ara</option>
+</select>
+<small class="catalog-label" id="catalogCount"></small>
+<img id="catalogPreview" class="catalog-preview" alt="Katalog ürün görseli">
+</div>
+
 <div class="field"><label>Ürün adı</label><input id="title" required maxlength="120"></div>
 <div class="field"><label>Marka</label><input id="brand" maxlength="80"></div>
 <div class="field"><label>Fiyat (TL)</label><input id="price" type="number" min="1" required></div>
-<div class="field"><label>Kategori</label><select id="category" required></select></div>
 <div class="field"><label>Durum</label><select id="itemCondition"><option value="new">Sıfır</option><option value="used">İkinci el</option></select></div>
 <div class="field"><label>Açıklama</label><textarea id="description" required maxlength="4000"></textarea></div>
 <div class="field"><label>Fotoğraflar (en fazla 5, her biri en fazla 2 MB)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple></div>
@@ -173,8 +188,7 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid va
 <input type="checkbox" id="listingAccepted" required>
 <span><a data-legal="listing">İlan Yayınlama Kuralları</a>'nı okudum ve kabul ediyorum. Ürün bilgilerinin doğru olduğunu, satışa sunma hakkına sahip olduğumu ve yasaklı ürün ilanı vermediğimi beyan ederim.</span>
 </label>
-
-<div class="notice">Kargo, teslimat yöntemi ve kargo ücreti alıcı ile satıcı tarafından kendi aralarında belirlenir. PAZARYERİ.COM kargo hizmeti sunmaz. Bu açıklama, platformun kanundan doğan yükümlülüklerini ortadan kaldırmaz.</div>
+<div class="notice">Kargo, teslimat yöntemi ve kargo ücreti alıcı ile satıcı tarafından kendi aralarında belirlenir. PAZARYERİ.COM kargo hizmeti sunmaz. Kanuni yükümlülükler saklıdır.</div>
 <button class="primary btn" type="submit" style="width:100%">İlanı gönder</button>
 <div id="listingMessage" class="status"></div>
 </form>
@@ -202,7 +216,7 @@ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_2QkN3JRkRLsyMW_fkVMV6Q_nEODjfAB";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
 const $=id=>document.getElementById(id);
-let currentUser=null,categories=[],products=[],activeCategory="",page=1;
+let currentUser=null,categories=[],products=[],catalogProducts=[],selectedCatalog=null,activeCategory="",page=1;
 const PAGE_SIZE=24;
 
 function escapeHTML(value=""){
@@ -215,103 +229,16 @@ function show(id){$(id).classList.add("show")}
 function hide(id){$(id).classList.remove("show")}
 
 const legalDocuments={
-terms:{
-title:"Kullanım Koşulları",
-html:`
-<p><b>PAZARYERİ.COM Kullanım Koşulları</b></p>
-<p>Bu metin, PAZARYERİ.COM internet sitesini kullanan ziyaretçi, üye, alıcı ve satıcılar için hazırlanmış taslak kullanım koşullarıdır.</p>
-<h3>1. Platformun amacı</h3>
-<p>PAZARYERİ.COM, kullanıcıların ürün ilanı oluşturmasına, ilanları incelemesine ve alıcılarla satıcıların iletişim kurmasına imkân sağlamayı amaçlayan çevrim içi bir pazaryeri platformudur.</p>
-<h3>2. Platformun rolü</h3>
-<p>Platform, aksi ayrıca açıkça belirtilmedikçe ürünlerin satıcısı değildir. Ürün satışına ilişkin sözleşme alıcı ile satıcı arasında kurulur. Platformun aracılık faaliyetinden doğan kanuni yükümlülükleri saklıdır.</p>
-<h3>3. Kullanıcı sorumlulukları</h3>
-<ul>
-<li>Kullanıcılar doğru ve güncel bilgi vermelidir.</li>
-<li>Başkasına ait hesap veya kimlik bilgileri izinsiz kullanılamaz.</li>
-<li>Sahte, yanıltıcı, hukuka aykırı veya yasaklı ürün ilanı verilemez.</li>
-<li>Kullanıcılar yürürlükteki mevzuata uymakla yükümlüdür.</li>
-</ul>
-<h3>4. Alıcı ve satıcı arasındaki ilişki</h3>
-<p>Ürün bedeli, ödeme yöntemi, kargo firması, teslimat yöntemi ve kargo ücreti alıcı ile satıcı tarafından kendi aralarında kararlaştırılır. PAZARYERİ.COM bu sürümde kargo organizasyonu veya teslimat hizmeti sunmamaktadır.</p>
-<p>Bu düzenleme, emredici tüketici mevzuatından veya platformun kanuni sorumluluklarından doğan hak ve yükümlülükleri ortadan kaldırmaz.</p>
-<h3>5. İlanların incelenmesi</h3>
-<p>İlanlar platform kurallarına uygunluk açısından incelenebilir. Kurallara aykırı olduğu değerlendirilen ilanlar yayına alınmayabilir, kaldırılabilir veya hesaplar kısıtlanabilir.</p>
-<h3>6. Değişiklikler</h3>
-<p>Bu koşullar gerektiğinde güncellenebilir. Güncel metin internet sitesinde yayımlanır.</p>
-`
-},
-privacy:{
-title:"Gizlilik Politikası",
-html:`
-<p>PAZARYERİ.COM, kullanıcıların gizliliğine önem verir. Bu metin, platformun kullanımı sırasında elde edilen bilgilerin genel olarak nasıl ele alındığını açıklar.</p>
-<h3>Toplanabilecek bilgiler</h3>
-<ul><li>Ad, soyad veya şirket adı</li><li>E-posta adresi ve hesap bilgileri</li><li>Yayımlanan ilanlar, ürün açıklamaları ve fotoğraflar</li><li>Platform kullanımı sırasında oluşan teknik kayıtlar</li></ul>
-<h3>Bilgilerin kullanım amaçları</h3>
-<p>Hesap oluşturma, kullanıcı doğrulama, ilan yayımlama ve yönetme, güvenliği sağlama, destek taleplerini yanıtlama ve yasal yükümlülükleri yerine getirme amaçlarıyla kullanılabilir.</p>
-<h3>Paylaşım</h3>
-<p>Bilgiler, hizmetin sunulması için kullanılan teknik hizmet sağlayıcılarla ve kanunen yetkili kurumlarla, ilgili mevzuata uygun şekilde paylaşılabilir.</p>
-<h3>Güvenlik</h3>
-<p>Bilgilerin korunması için makul teknik ve idari tedbirler alınması hedeflenir. İnternet üzerinden yapılan hiçbir aktarımın mutlak güvenliği garanti edilemez.</p>
-<p>Veri işleme faaliyetlerinin ayrıntıları için KVKK Aydınlatma Metni incelenmelidir.</p>
-`
-},
-kvkk:{
-title:"KVKK Aydınlatma Metni",
-html:`
-<p><b>ÖNEMLİ: Bu metin yayına hazır nihai metin değildir.</b> İşletmecinin gerçek kimlik ve iletişim bilgileri ile veri işleme süreçleri tamamlanmadan yayımlanmamalıdır.</p>
-<h3>1. Veri sorumlusu</h3>
-<p>Veri sorumlusu: <b>[İŞLETMECİNİN ADI SOYADI]</b></p>
-<p>İletişim adresi: <b>[TEBLİGAT / İŞ YERİ ADRESİ]</b></p>
-<p>E-posta: <b>[İLETİŞİM E-POSTA ADRESİ]</b></p>
-<h3>2. İşlenen kişisel veriler</h3>
-<p>Üyelik ve platform kullanımı kapsamında kimlik ve iletişim bilgileri, hesap bilgileri, ilan içerikleri, işlem güvenliği kayıtları ve destek yazışmaları işlenebilir.</p>
-<h3>3. İşleme amaçları</h3>
-<p>Üyelik oluşturulması, hesapların yönetilmesi, ilan hizmetlerinin sunulması, kullanıcı güvenliğinin sağlanması, şikâyetlerin incelenmesi ve mevzuattan doğan yükümlülüklerin yerine getirilmesi.</p>
-<h3>4. Hukuki sebepler ve aktarım</h3>
-<p>Kişisel veriler, 6698 sayılı Kişisel Verilerin Korunması Kanunu'nun 5. ve gerektiğinde 6. maddelerinde belirtilen hukuki sebepler kapsamında işlenebilir. Hizmet sağlayıcılarına veya yetkili kamu kurumlarına aktarım, ilgili hukuki şartlara göre yapılabilir.</p>
-<h3>5. İlgili kişinin hakları</h3>
-<p>KVKK'nın 11. maddesi kapsamında kişisel verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltme veya silme şartlarının oluşması hâlinde başvurma ve kanundaki diğer haklarınızı kullanma imkânınız vardır.</p>
-<p>Başvuru yöntemi ve iletişim bilgileri, işletmecinin gerçek bilgileri eklenerek tamamlanmalıdır.</p>
-`
-},
-cookies:{
-title:"Çerez Politikası",
-html:`
-<p>Çerezler, internet sitesinin çalışması ve kullanıcı deneyiminin iyileştirilmesi amacıyla tarayıcıda saklanabilen küçük veri dosyalarıdır.</p>
-<h3>Çerez kullanımı</h3>
-<p>PAZARYERİ.COM'un mevcut sürümünde kullanılan teknik altyapı ve üçüncü taraf hizmetler doğrultusunda zorunlu çerezler veya benzeri teknolojiler kullanılabilir.</p>
-<h3>Kontrol</h3>
-<p>Tarayıcı ayarlarınızdan çerezleri görüntüleyebilir, silebilir veya engelleyebilirsiniz. Zorunlu teknik işlevlerin engellenmesi sitenin bazı özelliklerinin çalışmasını etkileyebilir.</p>
-<p>Analitik veya reklam çerezleri kullanılmaya başlanırsa gerekli bilgilendirme ve izin mekanizmaları ayrıca düzenlenmelidir.</p>
-`
-},
-listing:{
-title:"İlan Yayınlama Kuralları",
-html:`
-<p>İlan veren kullanıcı aşağıdaki kurallara uymayı kabul eder:</p>
-<ul>
-<li>Ürün adı, marka, açıklama, fiyat ve fotoğraflar gerçeğe uygun olmalıdır.</li>
-<li>Kullanıcı, ürünü satışa sunma hakkına sahip olmalıdır.</li>
-<li>Sahte, çalıntı, taklit veya hukuka aykırı ürünler ilan edilemez.</li>
-<li>Yasalarca satışı yasaklanmış veya özel izne tabi ürünler gerekli şartlar sağlanmadan yayımlanamaz.</li>
-<li>Başkasına ait fotoğraf, marka, logo veya içerikler hukuka aykırı biçimde kullanılamaz.</li>
-<li>Yanıltıcı fiyat, sahte stok veya gerçeğe aykırı ürün durumu belirtilemez.</li>
-<li>Platform, kurallara aykırı ilanları inceleyebilir ve gerekli işlemleri yapabilir.</li>
-</ul>
-<h3>Kargo ve teslimat</h3>
-<p>Kargo firması, gönderim yöntemi, teslimat ve kargo ücreti alıcı ile satıcı tarafından kararlaştırılır. Platform kargo hizmeti sunmaz. Bununla birlikte platformun mevzuattan doğan yükümlülükleri saklıdır.</p>
-`
-}
+terms:{title:"Kullanım Koşulları",html:`<p>PAZARYERİ.COM, kullanıcıların ürün ilanı oluşturmasına, ilanları incelemesine ve alıcılarla satıcıların iletişim kurmasına imkân sağlayan çevrim içi pazaryeri platformudur.</p><h3>Platformun rolü</h3><p>Platform, aksi ayrıca belirtilmedikçe ürünlerin satıcısı değildir. Ürün satışına ilişkin sözleşme alıcı ile satıcı arasında kurulur. Platformun aracılık faaliyetinden doğan kanuni yükümlülükleri saklıdır.</p><h3>Kullanıcı sorumlulukları</h3><p>Kullanıcılar doğru bilgi vermeli, hukuka aykırı veya yasaklı ürün ilanı yayımlamamalı ve yürürlükteki mevzuata uymalıdır.</p><h3>Kargo ve teslimat</h3><p>Ürün bedeli, ödeme yöntemi, kargo firması, teslimat yöntemi ve kargo ücreti alıcı ile satıcı tarafından kararlaştırılır. Platform kargo hizmeti sunmaz. Kanuni yükümlülükler saklıdır.</p>`},
+privacy:{title:"Gizlilik Politikası",html:`<p>Üyelik ve platform kullanımı sırasında ad, soyad, şirket adı, e-posta, hesap bilgileri, ilan içerikleri, fotoğraflar ve teknik kayıtlar işlenebilir.</p><h3>Kullanım amaçları</h3><p>Hesap oluşturma, ilan hizmetlerinin sunulması, güvenlik, destek ve yasal yükümlülüklerin yerine getirilmesi.</p><h3>Paylaşım</h3><p>Bilgiler, hizmet sağlayıcıları ve kanunen yetkili kurumlarla ilgili mevzuata uygun şekilde paylaşılabilir.</p>`},
+kvkk:{title:"KVKK Aydınlatma Metni",html:`<p><b>Bu metin yayına hazır nihai metin değildir.</b> İşletmecinin gerçek kimlik ve iletişim bilgileri eklenmelidir.</p><h3>Veri sorumlusu</h3><p>[İŞLETMECİNİN ADI SOYADI]</p><p>[TEBLİGAT / İŞ YERİ ADRESİ]</p><p>[İLETİŞİM E-POSTA ADRESİ]</p><h3>İşlenen veriler</h3><p>Kimlik ve iletişim bilgileri, hesap bilgileri, ilan içerikleri ve işlem güvenliği kayıtları.</p><h3>Haklar</h3><p>KVKK'nın 11. maddesi kapsamındaki haklarınızı kullanabilirsiniz. Başvuru bilgileri işletmeci bilgileri eklenerek tamamlanmalıdır.</p>`},
+cookies:{title:"Çerez Politikası",html:`<p>Çerezler, internet sitesinin çalışması ve kullanıcı deneyiminin iyileştirilmesi amacıyla tarayıcıda saklanabilen küçük veri dosyalarıdır.</p><p>Analitik veya reklam çerezleri kullanılmaya başlanırsa gerekli bilgilendirme ve izin mekanizmaları ayrıca düzenlenmelidir.</p>`},
+listing:{title:"İlan Yayınlama Kuralları",html:`<ul><li>Ürün bilgileri ve fotoğraflar doğru olmalıdır.</li><li>Kullanıcı ürünü satışa sunma hakkına sahip olmalıdır.</li><li>Sahte, çalıntı, taklit veya hukuka aykırı ürünler ilan edilemez.</li><li>Yasaklı ürünler yayımlanamaz.</li><li>Başkasına ait içerikler hukuka aykırı kullanılamaz.</li><li>Yanıltıcı fiyat veya stok bilgisi verilemez.</li></ul><h3>Kargo</h3><p>Kargo ve teslimat koşulları alıcı ile satıcı tarafından kararlaştırılır. Platform kargo hizmeti sunmaz. Kanuni yükümlülükler saklıdır.</p>`}
 };
 
-function openLegal(key){
- const doc=legalDocuments[key];if(!doc)return;
- $("legalTitle").textContent=doc.title;
- $("legalContent").innerHTML=doc.html;
- show("legalModal");
-}
 document.querySelectorAll("[data-legal]").forEach(a=>a.addEventListener("click",e=>{
- e.preventDefault();openLegal(a.dataset.legal);
+ e.preventDefault();const d=legalDocuments[a.dataset.legal];if(!d)return;
+ $("legalTitle").textContent=d.title;$("legalContent").innerHTML=d.html;show("legalModal");
 }));
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>hide(b.dataset.close));
 document.querySelectorAll(".modal").forEach(m=>m.onclick=e=>{if(e.target===m)hide(m.id)});
@@ -330,6 +257,71 @@ async function loadCategories(){
   page=1;render();
  });
 }
+
+/* KATALOG: Yalnızca bilinen sütunlar sorgulanır. */
+async function loadCatalog(){
+ const {data,error}=await supabaseClient.from("catalog_products")
+ .select("id,name,brand,category,description,image_url")
+ .eq("is_active",true)
+ .order("name");
+ if(error){
+  console.error("Katalog yükleme hatası:",error);
+  $("catalogCount").textContent="Katalog yüklenemedi: "+error.message;
+  return;
+ }
+ catalogProducts=data||[];
+ updateCatalogOptions();
+ $("catalogCount").textContent=catalogProducts.length+" katalog ürünü hazır.";
+}
+
+function normalizeText(s){
+ return String(s||"").toLocaleLowerCase("tr-TR").trim()
+ .normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+
+function updateCatalogOptions(){
+ const categoryId=$("category").value;
+ const category=categories.find(c=>String(c.id)===String(categoryId));
+ const q=normalizeText($("catalogSearch").value);
+ let list=[...catalogProducts];
+
+ if(category){
+  const matching=list.filter(p=>normalizeText(p.category)===normalizeText(category.name));
+  if(matching.length)list=matching;
+ }
+ if(q)list=list.filter(p=>
+  normalizeText(p.name+" "+p.brand+" "+p.category).includes(q)
+ );
+ $("catalogProduct").innerHTML='<option value="">Katalogdan ürün seç</option>'+
+ list.map(p=>`<option value="${p.id}">${escapeHTML(p.name)}${p.brand?" — "+escapeHTML(p.brand):""}</option>`).join("");
+ $("catalogCount").textContent=list.length+" ürün bulundu.";
+}
+
+function chooseCatalogProduct(){
+ const id=$("catalogProduct").value;
+ selectedCatalog=catalogProducts.find(p=>String(p.id)===String(id))||null;
+ if(!selectedCatalog){
+  $("catalogPreview").style.display="none";return;
+ }
+ $("title").value=selectedCatalog.name||"";
+ $("brand").value=selectedCatalog.brand||"";
+ if(selectedCatalog.description)$("description").value=selectedCatalog.description;
+ const matchingCategory=categories.find(c=>normalizeText(c.name)===normalizeText(selectedCatalog.category));
+ if(matchingCategory)$("category").value=matchingCategory.id;
+ if(selectedCatalog.image_url){
+  $("catalogPreview").src=selectedCatalog.image_url;
+  $("catalogPreview").style.display="block";
+ }else $("catalogPreview").style.display="none";
+ updateCatalogOptions();
+ $("catalogProduct").value=selectedCatalog.id;
+}
+
+$("category").addEventListener("change",()=>{
+ selectedCatalog=null;$("catalogPreview").style.display="none";
+ updateCatalogOptions();
+});
+$("catalogSearch").addEventListener("input",updateCatalogOptions);
+$("catalogProduct").addEventListener("change",chooseCatalogProduct);
 
 async function loadProducts(){
  const {data,error}=await supabaseClient.from("listings")
@@ -383,7 +375,7 @@ function openDetail(id){
  <div class="price">${money(p.price)}</div>
  <p class="meta">${escapeHTML(p.categoryName)} · ${p.condition==="new"?"Sıfır":"İkinci el"}</p>
  <p style="margin-top:15px;white-space:pre-wrap">${escapeHTML(p.description||"Açıklama yok.")}</p>
- <div class="notice">Alım, ödeme ve teslimat koşulları bu sürümde alıcı ile satıcı arasında ayrıca kararlaştırılır.</div>`;
+ <div class="notice">Alım, ödeme ve teslimat koşulları alıcı ile satıcı arasında ayrıca kararlaştırılır.</div>`;
  show("detailModal");
 }
 
@@ -404,8 +396,7 @@ $("authButton").onclick=async()=>{
  if(currentUser){
   if(confirm("Hesabından çıkış yapmak istiyor musun?")){
    const {error}=await supabaseClient.auth.signOut();
-   if(error)alert(error.message);
-   else await updateUser();
+   if(error)alert(error.message);else await updateUser();
   }
   return;
  }
@@ -418,7 +409,7 @@ $("authSubmit").onclick=async()=>{
  try{
   if(!email||!password)throw Error("E-posta ve şifre gir.");
   if($("authMode").value==="register"){
-   if(!$("termsAccepted").checked)throw Error("Üyelik için Kullanım Koşulları'nı kabul etmelisin.");
+   if(!$("termsAccepted").checked)throw Error("Kullanım Koşulları'nı kabul etmelisin.");
    if(password.length<6)throw Error("Şifre en az 6 karakter olmalı.");
    const type=$("accountType").value;
    const fullName=$("fullName").value.trim(),companyName=$("companyName").value.trim();
@@ -427,12 +418,8 @@ $("authSubmit").onclick=async()=>{
    const {data,error}=await supabaseClient.auth.signUp({
     email,password,
     options:{data:{
-     account_type:type,
-     full_name:fullName,
-     company_name:companyName,
-     terms_accepted:true,
-     terms_version:"1.0",
-     terms_accepted_at:new Date().toISOString()
+     account_type:type,full_name:fullName,company_name:companyName,
+     terms_accepted:true,terms_version:"1.0",terms_accepted_at:new Date().toISOString()
     }}
    });
    if(error)throw error;
@@ -468,7 +455,11 @@ $("refreshMine").onclick=loadMyListings;
 
 $("sellButton").onclick=()=>{
  if(!currentUser){show("authModal");return}
+ $("listingForm").reset();
  $("listingAccepted").checked=false;
+ selectedCatalog=null;
+ $("catalogPreview").style.display="none";
+ updateCatalogOptions();
  show("listingModal");
 };
 
@@ -512,7 +503,9 @@ $("listingForm").onsubmit=async e=>{
    if(imageError)throw imageError;
   }
   msg.textContent="İlanın kaydedildi. Yönetici onayından sonra yayına alınacak.";
-  $("listingForm").reset();await loadMyListings();
+  $("listingForm").reset();
+  selectedCatalog=null;$("catalogPreview").style.display="none";
+  await loadMyListings();
  }catch(err){msg.className="status error";msg.textContent=err.message}
 };
 
@@ -524,6 +517,7 @@ async function init(){
  syncAuthForm();
  await updateUser();
  await loadCategories();
+ await loadCatalog();
  await loadProducts();
 }
 init();
