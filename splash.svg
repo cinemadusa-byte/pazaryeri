@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 760">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#202630"/><stop offset=".58" stop-color="#17191e"/><stop offset="1" stop-color="#101114"/></linearGradient>
+ <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffbd69"/><stop offset="1" stop-color="#ff7a18"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".35"/></filter>
+</defs>
+<rect width="900" height="760" rx="38" fill="url(#bg)"/>
+<circle cx="735" cy="150" r="190" fill="#ff8a24" opacity=".07"/>
+<circle cx="130" cy="590" r="160" fill="#3988ff" opacity=".05"/>
+<g filter="url(#shadow)">
+ <path d="M225 300h450l-35-128H260z" fill="url(#orange)"/>
+ <path d="M260 172h415l42 128H218z" fill="#f5f5f5"/>
+ <path d="M260 172h83l-10 128h-93zM425 172h83l8 128h-83zM590 172h85l42 128h-83z" fill="url(#orange)"/>
+ <path d="M238 300h440v235c0 15-12 27-27 27H265c-15 0-27-12-27-27z" fill="#e9edf2"/>
+ <path d="M281 355h112v207H281z" fill="#252a33"/>
+ <path d="M430 355h190v115H430z" fill="#ff9a37"/>
+ <path d="M430 492h190v70H430z" fill="#dce2e9"/>
+ <path d="M470 392h110M470 425h74" stroke="#252a33" stroke-width="13" stroke-linecap="round"/>
+ <path d="M319 230v38m164-38v38m164-38v38" stroke="#17191e" stroke-width="9" stroke-linecap="round" opacity=".22"/>
+</g>
+<g transform="translate(610 470)" filter="url(#shadow)">
+ <path d="M0 0h92l24 118H22z" fill="url(#orange)"/>
+ <path d="M24 0v-23c0-22 15-38 35-38s35 16 35 38V0" fill="none" stroke="#fff1df" stroke-width="12" stroke-linecap="round"/>
+ <path d="M28 44h38" stroke="#17191e" stroke-width="9" stroke-linecap="round"/>
+</g>
+<text x="450" y="655" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="48" font-weight="800" letter-spacing="1">PAZARYERİ<tspan fill="#ff8a24">.COM</tspan></text>
+<text x="450" y="700" text-anchor="middle" fill="#b8bec8" font-family="Arial,sans-serif" font-size="20">Alışverişin yeni buluşma noktası</text>
+</svg>
